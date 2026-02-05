@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Lock, Mail, ArrowRight, Home, ChevronLeft } from 'lucide-react';
 import logo from '../assets/hope logo.png';
 import loginBg from '../assets/login-bg.png';
+import loginVideo from '../assets/login-page-video.mp4';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,7 +42,14 @@ const Login = () => {
             <p>Access your workspace and continue building the foundation for a better tomorrow.</p>
           </motion.div>
         </div>
-        <img src={loginBg} alt="Login Illustration" className="bg-image" />
+        <video
+          src={loginVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="bg-video"
+        />
       </div>
 
       <div className="login-side-form">
@@ -137,7 +145,7 @@ const Login = () => {
           }
         }
 
-        .bg-image {
+        .bg-video {
           position: absolute;
           width: 100%;
           height: 100%;
