@@ -125,7 +125,7 @@ const Login = () => {
         }
 
         .login-side-illustration {
-          flex: 1.2;
+          flex: 7;
           position: relative;
           background: #f8fafc;
           display: none;
@@ -142,13 +142,13 @@ const Login = () => {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0.9;
+          opacity: 1;
         }
 
         .illustration-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, rgba(0, 209, 193, 0.1), rgba(251, 191, 36, 0.1));
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
           z-index: 2;
           padding: 5rem;
           display: flex;
@@ -158,6 +158,7 @@ const Login = () => {
         .illustration-content {
           max-width: 500px;
           color: #1e293b;
+          text-shadow: 0 2px 10px rgba(255,255,255,1);
         }
 
         .illustration-tag {
@@ -186,18 +187,33 @@ const Login = () => {
           font-size: 1.1rem;
           line-height: 1.6;
           color: #475569;
-          font-weight: 500;
+          font-weight: 600;
         }
 
         .login-side-form {
-          flex: 1;
+          flex: 3;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 2rem;
+          padding: 3rem;
           background: white;
           position: relative;
           z-index: 10;
+          border-left: 1px solid #f1f5f9;
+          overflow: hidden;
+        }
+
+        .login-side-form::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: url(${loginBg});
+          background-size: cover;
+          background-position: center;
+          filter: blur(3px); /* 10% Blur effect */
+          opacity: 0.12;
+          z-index: -1;
+          transform: scale(1.05); /* Minimal scale for light blur */
         }
 
         .login-form-container {
