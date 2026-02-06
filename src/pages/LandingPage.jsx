@@ -6,13 +6,30 @@ import {
     Twitter,
     Play,
     Search,
-    ArrowRight
+    ArrowRight,
+    Sparkles,
+    ShieldCheck,
+    Heart,
+    GraduationCap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logo from '../assets/hope logo.png';
+import groupImg1 from '../assets/group image/group image.png';
+import groupImg2 from '../assets/group image/image.png';
+import groupImg3 from '../assets/group image/image copy.png';
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+    const images = [groupImg1, groupImg2, groupImg3];
+
+    // Auto-rotate images every 4 seconds
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentImageIndex((prev) => (prev + 1) % images.length);
+        }, 4000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <>
@@ -92,6 +109,81 @@ const LandingPage = () => {
                             </div>
                         </motion.div>
                     </div>
+
+                    {/* Visual Group Image Section - Carousel */}
+                    <motion.div
+                        className="hero-media-wrap"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 1, delay: 0.6 }}
+                    >
+                        <div className="media-mask">
+                            <motion.div className="carousel-container">
+                                {images.map((img, index) => (
+                                    <motion.img
+                                        key={index}
+                                        src={img}
+                                        alt={`HOPE3 Group ${index + 1}`}
+                                        className="hero-group-image carousel-image"
+                                        initial={{ opacity: 0 }}
+                                        animate={{
+                                            opacity: currentImageIndex === index ? 1 : 0,
+                                            scale: currentImageIndex === index ? 1 : 1.1
+                                        }}
+                                        transition={{ duration: 0.8 }}
+                                        style={{
+                                            position: currentImageIndex === index ? 'relative' : 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%'
+                                        }}
+                                    />
+                                ))}
+                            </motion.div>
+                            <div className="media-overlay-effects">
+                                <div className="shiny-sweep"></div>
+                            </div>
+                        </div>
+
+                        {/* Carousel Navigation Dots */}
+                        <div className="carousel-dots">
+                            {images.map((_, index) => (
+                                <motion.div
+                                    key={index}
+                                    className={`carousel-dot ${currentImageIndex === index ? 'active' : ''}`}
+                                    onClick={() => setCurrentImageIndex(index)}
+                                    whileHover={{ scale: 1.2 }}
+                                    whileTap={{ scale: 0.9 }}
+                                />
+                            ))}
+                        </div>
+
+                        {/* Floating Glass Badges */}
+                        <motion.div
+                            className="floating-badge badge-top-left"
+                            animate={{ y: [0, -10, 0] }}
+                            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                        >
+                            <Sparkles size={16} />
+                            <span>2026 cohort</span>
+                        </motion.div>
+
+                        <motion.div
+                            className="floating-badge badge-bottom-right"
+                            animate={{ y: [0, 10, 0] }}
+                            transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
+                        >
+                            <ShieldCheck size={16} />
+                            <span>Impact Verified</span>
+                        </motion.div>
+
+                        {/* Decorative Icons */}
+                        <div className="decor-icon icon-1"><Heart size={20} /></div>
+                        <div className="decor-icon icon-2"><GraduationCap size={20} /></div>
+
+                        <div className="media-accent-glow"></div>
+                    </motion.div>
 
                     {/* Foundation Story Content (Bottom Area) */}
                     <motion.div

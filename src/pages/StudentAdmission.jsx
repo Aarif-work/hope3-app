@@ -35,6 +35,9 @@ import {
 } from 'lucide-react';
 
 import logo from '../assets/hope logo.png';
+import groupImg1 from '../assets/group image/group image.png';
+import groupImg2 from '../assets/group image/image.png';
+import groupImg3 from '../assets/group image/image copy.png';
 
 // --- Pure UI Components (Defined Outside to Prevent Focus Loss) ---
 
@@ -576,7 +579,86 @@ const localStyles = (
         .logo-brand-cln { display: flex; align-items: center; gap: 1rem; }
         .logo-cln { height: 40px; }
         .brand-name-cln { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.1rem; color: #111827; text-transform: uppercase; letter-spacing: 0.05em; }
-        .admission-intro { text-align: center; margin-bottom: 3rem; }
+        .admission-intro { text-align: center; margin-bottom: 4rem; }
+        
+        /* Image Grid Styles */
+        .admission-image-grid {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 3.5rem;
+            display: flex;
+            gap: 1.5rem;
+            flex-direction: column;
+        }
+        
+        .admission-main-image {
+            position: relative;
+            width: 100%;
+            border-radius: 32px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 15px 30px rgba(0, 209, 193, 0.08);
+            border: 2px solid #fff;
+        }
+        
+        .admission-main-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            aspect-ratio: 21/9;
+        }
+        
+        .admission-side-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .admission-side-image {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+            border: 1.5px solid #f1f5f9;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .admission-side-image:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+        }
+        
+        .admission-side-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+            aspect-ratio: 16/10;
+        }
+        
+        .image-label {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        @media (max-width: 768px) {
+            .admission-side-images {
+                grid-template-columns: 1fr;
+            }
+        }
         .title-cln { font-size: 2.2rem; font-weight: 950; color: #111827; margin-bottom: 2rem; }
         
         /* Step Tracker Visual */
