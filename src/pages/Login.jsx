@@ -12,6 +12,18 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Demo credentials for testing
+  const demoAccounts = [
+    { role: 'Super Admin', email: 'superadmin@hope3.org', password: 'super123', color: '#ef4444' },
+    { role: 'Admin', email: 'admin@hope3.org', password: 'admin123', color: '#00d1c1' },
+    { role: 'Donor', email: 'donor@hope3.org', password: 'donor123', color: '#fbbf24' }
+  ];
+
+  const fillCredentials = (account) => {
+    setEmail(account.email);
+    setPassword(account.password);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -116,6 +128,19 @@ const Login = () => {
               )}
             </button>
           </form>
+
+          {/* Demo Credentials - Text Only */}
+          <div className="demo-credentials-section">
+            {demoAccounts.map((account, index) => (
+              <div
+                key={account.role}
+                className="demo-account-text"
+                onClick={() => fillCredentials(account)}
+              >
+                {account.email} / {account.password}
+              </div>
+            ))}
+          </div>
 
           <div className="login-footer">
             <p>Are you a student? <span onClick={() => navigate('/apply')}>Start Application</span></p>
@@ -439,6 +464,30 @@ const Login = () => {
 
         .login-submit-btn:active {
           transform: translateY(0);
+        }
+
+        }
+
+        /* Demo Credentials - Text Only */
+        .demo-credentials-section {
+          margin-top: 5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .demo-account-text {
+          font-size: 0.85rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: opacity 0.2s ease;
+          text-align: center;
+          font-family: 'Courier New', monospace;
+        }
+
+        .demo-account-text:hover {
+          opacity: 0.7;
+          text-decoration: underline;
         }
 
         .login-footer {
