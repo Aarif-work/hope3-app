@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import groupImage from '../assets/group image/group image.png';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion } from 'framer-motion';
+import loadingVideo from '../assets/video/loading page.mp4';
 import logo from '../assets/hope logo.png';
 import './LoadingScreen.css';
 
 const LoadingScreen = ({ onComplete }) => {
     const [progress, setProgress] = useState(0);
+    const videoRef = useRef(null);
 
     useEffect(() => {
         const timer = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(timer);
-                    setTimeout(onComplete, 500);
+                    setTimeout(onComplete, 800);
                     return 100;
                 }
-                return prev + 1;
+                return prev + 2; // Slightly faster progress for video feel
             });
-        }, 30);
+        }, 50);
 
         return () => clearInterval(timer);
     }, [onComplete]);
@@ -28,28 +29,33 @@ const LoadingScreen = ({ onComplete }) => {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-            <div className="loading-bg-layers">
-                <div className="loading-blob blob-1"></div>
-                <div className="loading-blob blob-2"></div>
+            {/* Background Video - Fully Viewed */}
+            <div className="video-background">
+                <video
+                    ref={videoRef}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="loading-video"
+                >
+                    <source src={loadingVideo} type="video/mp4" />
+                </video>
+                <div className="video-overlay"></div>
             </div>
 
             <div className="loading-content">
                 <motion.div
-                    className="loading-image-container"
-                    initial={{ scale: 1.1, opacity: 0 }}
+                    className="loading-center-card"
+                    initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    transition={{ duration: 1 }}
                 >
-                    <img src={groupImage} alt="HOPE3 Foundation" className="loading-group-img" />
-                    <div className="image-overlay-gradient"></div>
-                </motion.div>
-
-                <div className="loading-footer-content">
                     <motion.div
                         className="loading-logo-wrap"
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.8 }}
+                        transition={{ delay: 0.3, duration: 0.8 }}
                     >
                         <img src={logo} alt="HOPE3 Logo" className="loading-logo" />
                         <div className="loading-brand">
@@ -73,11 +79,11 @@ const LoadingScreen = ({ onComplete }) => {
                         className="loading-tagline"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ delay: 0.8 }}
+                        transition={{ delay: 0.6 }}
                     >
                         Building the foundation for a better tomorrow.
                     </motion.p>
-                </div>
+                </motion.div>
             </div>
         </motion.div>
     );
