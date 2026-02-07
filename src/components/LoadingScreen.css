@@ -2,135 +2,180 @@
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #000;
+    background: #ffffff;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     overflow: hidden;
 }
 
-.video-background {
+.loading-bg-layers {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
+    z-index: -1;
 }
 
-.loading-video {
+.loading-blob {
+    position: absolute;
+    filter: blur(80px);
+    opacity: 0.4;
+    border-radius: 50%;
+}
+
+.loading-blob.blob-1 {
+    top: -10%;
+    right: -5%;
+    width: 50vw;
+    height: 50vh;
+    background: linear-gradient(135deg, #00d1c1, #fbbf24);
+    animation: float-slow 10s infinite alternate;
+}
+
+.loading-blob.blob-2 {
+    bottom: -10%;
+    left: -5%;
+    width: 60vw;
+    height: 40vh;
+    background: linear-gradient(135deg, #fbbf24, #a3e635);
+    animation: float-slow 12s infinite alternate-reverse;
+}
+
+@keyframes float-slow {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(30px, 20px) rotate(5deg);
+    }
+}
+
+.loading-content {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.loading-image-container {
+    width: 85%;
+    max-width: 1000px;
+    aspect-ratio: 16 / 9;
+    border-radius: 32px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 50px 100px rgba(0, 0, 0, 0.15);
+    margin-bottom: 4rem;
+}
+
+.loading-group-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.video-overlay {
+.image-overlay-gradient {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    /* Darken video for text readability */
-    z-index: 1;
+    background: linear-gradient(to bottom, transparent 60%, rgba(255, 255, 255, 0.4));
 }
 
-.loading-content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 500px;
-    padding: 2rem;
-}
-
-.loading-center-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    padding: 3rem 2rem;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
+.loading-footer-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    max-width: 400px;
 }
 
 .loading-logo-wrap {
     display: flex;
     align-items: center;
     gap: 1.2rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
 }
 
 .loading-logo {
-    height: 60px;
+    height: 50px;
     width: auto;
 }
 
 .loading-brand {
     display: flex;
     flex-direction: column;
-    text-align: left;
+    line-height: 1;
 }
 
 .brand-h {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     font-weight: 900;
-    color: #ffffff;
+    color: #111827;
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
 .brand-f {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #fbbf24;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 0.3em;
+    margin-top: 4px;
 }
 
 .progress-container {
     width: 100%;
-    max-width: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.8rem;
 }
 
 .progress-track {
     width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    height: 6px;
+    background: #f1f5f9;
     border-radius: 10px;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid #e2e8f0;
 }
 
 .progress-fill {
     height: 100%;
-    background: linear-gradient(90deg, #fbbf24, #00d1c1);
+    background: linear-gradient(90deg, #00d1c1, #fbbf24);
     border-radius: 10px;
 }
 
 .progress-text {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #64748b;
     font-family: 'Outfit', sans-serif;
 }
 
 .loading-tagline {
     margin-top: 2rem;
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
+    font-size: 0.9rem;
+    color: #94a3b8;
+    font-weight: 600;
     text-align: center;
-    max-width: 80%;
+    font-style: italic;
 }
 
 @media (max-width: 768px) {
-    .loading-center-card {
-        padding: 2rem 1.5rem;
+    .loading-image-container {
+        width: 100%;
+        border-radius: 20px;
+        margin-bottom: 3rem;
     }
 
     .brand-h {
-        font-size: 1.4rem;
+        font-size: 1.2rem;
     }
 }
