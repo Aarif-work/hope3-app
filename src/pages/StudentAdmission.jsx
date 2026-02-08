@@ -577,7 +577,7 @@ const StudentAdmission = () => {
                             {Array.from({ length: totalSteps }, (_, i) => i + 1).map(s => (
                                 <React.Fragment key={s}>
                                     <div className={`step-node ${s === step ? 'active' : s < step ? 'completed' : ''}`}>
-                                        {s < step ? <CheckCircle size={16} /> : s}
+                                        {s < step ? <CheckCircle size={20} strokeWidth={3} /> : <span>{s}</span>}
                                     </div>
                                     {s < totalSteps && <div className={`step-connector ${s < step ? 'filled' : ''}`}></div>}
                                 </React.Fragment>
@@ -657,8 +657,8 @@ const StudentAdmission = () => {
                                         <InputField label="10th School Location" name="tenthSchoolLocation" value={formData.tenthSchoolLocation} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="10th Registration number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} required />
-                                        <CustomDropdown label="District where you studied 10th standard?" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <InputField label="10th Registration Number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} required />
+                                        <CustomDropdown label="10th District Studied" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
                                         <CustomDropdown label="School Region type" name="tenthSchoolRegionType" value={formData.tenthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
@@ -696,7 +696,7 @@ const StudentAdmission = () => {
                                     </div>
                                     <div className="grid-flex">
                                         <InputField label="Diploma Percentage" type="number" name="diplomaPercentage" value={formData.diplomaPercentage} onChange={handleChange} required helperText="Enter percentage (e.g., 85.5)" />
-                                        <CustomDropdown label="District where you studied Diploma?" name="diplomaDistrictStudied" value={formData.diplomaDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <CustomDropdown label="Diploma District Studied" name="diplomaDistrictStudied" value={formData.diplomaDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
                                         <CustomDropdown label="College Region type" name="diplomaCollegeRegionType" value={formData.diplomaCollegeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
@@ -715,7 +715,7 @@ const StudentAdmission = () => {
                                     </div>
                                     <div className="grid-flex">
                                         <InputField label="11th Registration Number" name="eleventhRegistrationNumber" value={formData.eleventhRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="District where you studied 11th standard?" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <CustomDropdown label="11th District Studied" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
                                         <CustomDropdown label="School Region type" name="eleventhSchoolRegionType" value={formData.eleventhSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
@@ -777,7 +777,7 @@ const StudentAdmission = () => {
                                     </div>
                                     <div className="grid-flex">
                                         <InputField label="12th Registration Number" name="twelfthRegistrationNumber" value={formData.twelfthRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="District where you studied 12th standard?" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <CustomDropdown label="12th District Studied" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
                                         <CustomDropdown label="School Region type" name="twelfthSchoolRegionType" value={formData.twelfthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
@@ -890,11 +890,23 @@ const localStyles = (
         .title-cln { font-size: 2.2rem; font-weight: 950; color: #111827; margin-bottom: 2rem; }
         
         /* Step Tracker Visual */
-        .step-tracker-visual { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 1rem; }
-        .step-node { width: 42px; height: 42px; border-radius: 50%; border: 2px solid #e2e8f0; display: flex; align-items: center; justify-content: center; background: white; color: #94a3b8; font-weight: 800; font-size: 0.9rem; position: relative; z-index: 2; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .step-node.active { border-color: var(--primary); color: var(--primary); transform: scale(1.15); box-shadow: 0 0 0 5px rgba(0, 209, 193, 0.1); }
-        .step-node.completed { border-color: var(--primary); background: var(--primary); color: white; }
-        .step-connector { width: 45px; height: 3px; background: #f1f5f9; position: relative; z-index: 1; }
+        .step-tracker-visual { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 2rem; }
+        .step-node { 
+            width: 44px; height: 44px; border-radius: 50%; border: 2.5px solid #e2e8f0; 
+            display: flex; align-items: center; justify-content: center; background: white; 
+            color: #94a3b8; font-weight: 800; font-size: 1rem; position: relative; z-index: 2; 
+            transition: all 0.3s ease; 
+        }
+        .step-node.active { 
+            border-color: var(--primary); color: var(--primary); 
+            box-shadow: 0 0 0 8px rgba(0, 209, 193, 0.08);
+            transform: scale(1.05);
+        }
+        .step-node.completed { 
+            border-color: var(--primary); background: var(--primary); color: white; 
+        }
+        .step-node span { position: relative; top: 1px; }
+        .step-connector { width: 50px; height: 3px; background: #e2e8f0; position: relative; z-index: 1; margin: 0 -2px; }
         .step-connector.filled { background: var(--primary); }
 
         .form-card-padding { padding: 4rem; background: white; box-shadow: 0 40px 100px rgba(0,0,0,0.06); border-radius: 40px; border: 2px solid #b2bec3; }
@@ -904,7 +916,7 @@ const localStyles = (
         .label-sub::after { content: ''; height: 1px; flex: 1; background: #b2bec3; }
         
         .form-group-admission { margin-bottom: 2rem; position: relative; }
-        .label-row-cln { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.7rem; }
+        .label-row-cln { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 0.7rem; min-height: 1.2rem; }
         .label-row-cln label, .form-group-admission > label { display: block; font-size: 0.95rem; font-weight: 750; color: #1e293b; text-transform: none; letter-spacing: -0.01em; margin: 0; }
         .helper-text-cln { font-size: 0.7rem; color: #94a3b8; font-weight: 600; }
         
