@@ -2,42 +2,7 @@ import React, { useState, useRef, useEffect, memo } from 'react';
 import confetti from 'canvas-confetti';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-    CheckCircle,
-    ArrowRight,
-    ArrowLeft,
-    GraduationCap,
-    Mail,
-    Phone,
-    Calendar,
-    User,
-    Building,
-    Briefcase,
-    ChevronLeft,
-    ShieldCheck,
-    MapPin,
-    Home,
-    Upload,
-    FileText,
-    Users,
-    Activity,
-    Target,
-    Heart,
-    DollarSign,
-    Link,
-    ChevronDown,
-    FileUp,
-    X,
-    Image as ImageIcon,
-    Sparkles,
-    Copy,
-    Printer
-} from 'lucide-react';
-
 import logo from '../assets/hope logo.png';
-import groupImg1 from '../assets/group image/group image.png';
-import groupImg2 from '../assets/group image/image.png';
-import groupImg3 from '../assets/group image/image copy.png';
 
 // --- Pure UI Components (Defined Outside to Prevent Focus Loss) ---
 
@@ -134,61 +99,23 @@ const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange
     );
 });
 
-const CustomFilePicker = memo(({ label, helperText, name, value, onChange }) => {
-    const fileInputRef = useRef(null);
-
-    const handleFileClick = () => fileInputRef.current.click();
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            onChange({ target: { name, type: 'file', files: [file] } });
-        }
-    };
-
-    const clearFile = (e) => {
-        e.stopPropagation();
-        onChange({ target: { name, value: null } });
-        if (fileInputRef.current) fileInputRef.current.value = '';
-    };
-
-    return (
-        <div className="form-group-admission">
-            <div className="label-row-cln">
-                <label>{label}</label>
-                {helperText && <span className="helper-text-cln">{helperText}</span>}
-            </div>
-            <div className={`file-picker-enhanced ${value ? 'has-file' : ''}`} onClick={handleFileClick}>
-                <input
-                    type="file"
-                    ref={fileInputRef}
-                    style={{ display: 'none' }}
-                    onChange={handleFileChange}
-                    accept="image/*"
-                />
-                <div className="file-picker-inner">
-                    {value ? (
-                        <div className="file-info-cln">
-                            <div className="file-preview-cln">
-                                <ImageIcon size={20} className="file-icon-pulse" />
-                                <span className="file-name-truncate">{value.name}</span>
-                            </div>
-                            <button type="button" className="clear-file-btn" onClick={clearFile}><X size={16} /></button>
-                        </div>
-                    ) : (
-                        <div className="file-placeholder-cln">
-                            <FileUp size={24} className="upload-icon-anim" />
-                            <div className="text-stack-cln">
-                                <span className="main-text">Click to upload photograph</span>
-                                <span className="sub-text">PNG, JPG or WEBP (Max 2MB)</span>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-});
+import {
+    CheckCircle,
+    ArrowRight,
+    ArrowLeft,
+    Mail,
+    Phone,
+    Calendar,
+    User,
+    ChevronLeft,
+    ShieldCheck,
+    MapPin,
+    Home,
+    Users,
+    ChevronDown,
+    Copy,
+    Printer
+} from 'lucide-react';
 
 const StudentAdmission = () => {
     const navigate = useNavigate();
@@ -197,24 +124,37 @@ const StudentAdmission = () => {
     const [applicationId, setApplicationId] = useState('');
     const [copying, setCopying] = useState(false);
     const [formData, setFormData] = useState({
-        sNo: '', fullName: '', admissionMode: 'Regular', gender: '', dobOriginal: '', gmailId: '', mobileNumber: '', photographRecent: null,
-        religion: '', community: '', physicallyChallenged: 'No', fullAddress: '', areaType: 'Urban', landmark: '', area: '', district: '', pincode: '',
-        parentStatus: 'Both Alive', fatherName: '', fatherOccupation: '', fatherContactNumber: '', motherName: '', motherOccupation: '', motherContactNumber: '',
-        guardianName: '', guardianOccupation: '', guardianContactNumber: '', numberOfSiblings: '0', courseName: '', majorSubject: '', collegeName: '',
-        collegeAddress: '', bankNameSavings: '', bankAccountNumber: '', bankIfscCode: '', parentAccountNumber: '', parentIfscCode: '',
-        academicFundingMaturity: 'No', fundingPercentage: '0', fundingAmountApprox: '0', fundersNames: '', adminRemarks: '', folderLink: '',
-        currentlyWorking: 'No', currentLocation: '', currentDesignation: '', isMarried: 'No', isOnTrack: 'Yes', willingToVolunteer: 'Yes', otherNotes: ''
+        // Page 1: Student Details
+        firstName: '',
+        lastName: '',
+        dob: '',
+        homeAddress: '',
+        pincode: '',
+        studentMobile: '',
+        studentMobileAlt: '',
+        email: '',
+        knowledgeSource: '',
+        gender: '',
+        district: '',
+        physicallyChallenged: '',
+        livingWith: '',
+        homeRegionType: '',
+        courseToStudy: '',
+        ambitionChoice1: '',
+        ambitionChoice2: '',
+        isFirstGraduate: '',
+        // Page 2: Relative's Information
+        relativeName: '',
+        relativeOccupation: '',
+        relativeMobile: '',
+        relativeEmail: '',
+        familyMembersCount: '',
+        familyIncomeMonthly: '',
+        relationshipType: '',
+        relativeEducation: ''
     });
 
-    const [photoPreview, setPhotoPreview] = useState(null);
 
-    useEffect(() => {
-        if (formData.photographRecent) {
-            const url = URL.createObjectURL(formData.photographRecent);
-            setPhotoPreview(url);
-            return () => URL.revokeObjectURL(url);
-        }
-    }, [formData.photographRecent]);
 
     const triggerCelebration = () => {
         const duration = 5 * 1000;
@@ -281,51 +221,39 @@ const StudentAdmission = () => {
 
                     <div className="print-content-grid">
                         <div className="print-section">
-                            <h3 className="section-divider">Baseline Information</h3>
-                            <div className="p-row"><span>Full Name:</span> <strong>{formData.fullName}</strong></div>
-                            <div className="p-row"><span>Gender:</span> <strong>{formData.gender}</strong></div>
-                            <div className="p-row"><span>Date of Birth:</span> <strong>{formData.dobOriginal}</strong></div>
-                            <div className="p-row"><span>Mobile:</span> <strong>{formData.mobileNumber}</strong></div>
-                            <div className="p-row"><span>Email:</span> <strong>{formData.gmailId}</strong></div>
-                            <div className="p-row"><span>Admission Mode:</span> <strong>{formData.admissionMode}</strong></div>
-                        </div>
-
-                        <div className="print-photo-box">
-                            {photoPreview ? <img src={photoPreview} alt="Student" /> : <div className="photo-placeholder">PHOTO</div>}
-                        </div>
-                    </div>
-
-                    <div className="print-section">
-                        <h3 className="section-divider">Geographic Details</h3>
-                        <div className="p-row"><span>Address:</span> <strong>{formData.fullAddress}</strong></div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Area Type:</span> <strong>{formData.areaType}</strong></div>
-                            <div className="p-row"><span>District:</span> <strong>{formData.district}</strong></div>
+                            <h3 className="section-divider">Student Details</h3>
+                            <div className="p-row"><span>First Name:</span> <strong>{formData.firstName}</strong></div>
+                            <div className="p-row"><span>Initial / Last Name:</span> <strong>{formData.lastName}</strong></div>
+                            <div className="p-row"><span>Date of Birth:</span> <strong>{formData.dob}</strong></div>
+                            <div className="p-row"><span>Home Address:</span> <strong>{formData.homeAddress}</strong></div>
                             <div className="p-row"><span>Pincode:</span> <strong>{formData.pincode}</strong></div>
+                            <div className="p-row"><span>Mobile Number:</span> <strong>{formData.studentMobile}</strong></div>
+                            <div className="p-row"><span>Alternate Mobile:</span> <strong>{formData.studentMobileAlt}</strong></div>
+                            <div className="p-row"><span>Email:</span> <strong>{formData.email}</strong></div>
+                            <div className="p-row"><span>Gender:</span> <strong>{formData.gender}</strong></div>
+                            <div className="p-row"><span>District:</span> <strong>{formData.district}</strong></div>
                         </div>
                     </div>
 
                     <div className="print-section">
-                        <h3 className="section-divider">Family & Guardian</h3>
-                        <div className="p-row"><span>Parent Status:</span> <strong>{formData.parentStatus}</strong></div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Father Name:</span> <strong>{formData.fatherName}</strong></div>
-                            <div className="p-row"><span>Father Occupation:</span> <strong>{formData.fatherOccupation}</strong></div>
-                        </div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Mother Name:</span> <strong>{formData.motherName}</strong></div>
-                            <div className="p-row"><span>Mother Occupation:</span> <strong>{formData.motherOccupation}</strong></div>
-                        </div>
+                        <h3 className="section-divider">Educational & Ambition</h3>
+                        <div className="p-row"><span>Course Desired:</span> <strong>{formData.courseToStudy}</strong></div>
+                        <div className="p-row"><span>Ambition 1:</span> <strong>{formData.ambitionChoice1}</strong></div>
+                        <div className="p-row"><span>Ambition 2:</span> <strong>{formData.ambitionChoice2}</strong></div>
+                        <div className="p-row"><span>First Graduate:</span> <strong>{formData.isFirstGraduate}</strong></div>
+                        <div className="p-row"><span>Region Type:</span> <strong>{formData.homeRegionType}</strong></div>
                     </div>
 
                     <div className="print-section">
-                        <h3 className="section-divider">Academic & Banking</h3>
-                        <div className="p-row"><span>College:</span> <strong>{formData.collegeName}</strong></div>
-                        <div className="p-row"><span>Course/Major:</span> <strong>{formData.courseName} - {formData.majorSubject}</strong></div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Bank:</span> <strong>{formData.bankNameSavings}</strong></div>
-                            <div className="p-row"><span>A/C No:</span> <strong>{formData.bankAccountNumber}</strong></div>
-                        </div>
+                        <h3 className="section-divider">Relative's Information</h3>
+                        <div className="p-row"><span>Relative Name:</span> <strong>{formData.relativeName}</strong></div>
+                        <div className="p-row"><span>Relationship:</span> <strong>{formData.relationshipType}</strong></div>
+                        <div className="p-row"><span>Occupation:</span> <strong>{formData.relativeOccupation}</strong></div>
+                        <div className="p-row"><span>Mobile:</span> <strong>{formData.relativeMobile}</strong></div>
+                        <div className="p-row"><span>Email ID:</span> <strong>{formData.relativeEmail}</strong></div>
+                        <div className="p-row"><span>Education:</span> <strong>{formData.relativeEducation}</strong></div>
+                        <div className="p-row"><span>Family Members:</span> <strong>{formData.familyMembersCount}</strong></div>
+                        <div className="p-row"><span>Monthly Income:</span> <strong>{formData.familyIncomeMonthly}</strong></div>
                     </div>
 
                     <div className="print-footer">
@@ -353,8 +281,8 @@ const StudentAdmission = () => {
                             </motion.div>
                         </div>
                         <div className="success-content">
-                            <h1 className="premium-success-title">Enrollment Complete!</h1>
-                            <p className="premium-success-subtitle">Welcome to the HOPE3 Academy Family. The candidate's academic profile is now active and verified.</p>
+                            <h1 className="premium-success-title">Application Submitted!</h1>
+                            <p className="premium-success-subtitle">Thank you for applying for the Hope3 Scholarship. Your application has been received and is under review.</p>
                             <div className="hope-id-box">
                                 <span className="id-meta">OFFICIAL HOPE IDENTIFIER</span>
                                 <div className="id-value-row">
@@ -391,14 +319,14 @@ const StudentAdmission = () => {
                         </div>
                     </div>
                     <div className="admission-intro">
-                        <h2 className="title-cln">Enhanced Student Enrollment</h2>
+                        <h2 className="title-cln">Scholarship Application Form</h2>
                         <div className="step-tracker-visual">
-                            {[1, 2, 3, 4, 5, 6].map(s => (
+                            {[1, 2].map(s => (
                                 <React.Fragment key={s}>
                                     <div className={`step-node ${s === step ? 'active' : s < step ? 'completed' : ''}`}>
                                         {s < step ? <CheckCircle size={16} /> : s}
                                     </div>
-                                    {s < 6 && <div className={`step-connector ${s < step ? 'filled' : ''}`}></div>}
+                                    {s < 2 && <div className={`step-connector ${s < step ? 'filled' : ''}`}></div>}
                                 </React.Fragment>
                             ))}
                         </div>
@@ -408,156 +336,72 @@ const StudentAdmission = () => {
                         <AnimatePresence mode="wait">
                             {step === 1 && (
                                 <motion.div key="s1" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Step 1: Identity & Profile Baseline</h3>
+                                    <h3 className="step-heading">Page 1: Student Details</h3>
                                     <div className="grid-flex">
-                                        <InputField label="Name" icon={User} name="fullName" value={formData.fullName} onChange={handleChange} required placeholder="Full name as per official records" />
-                                        <CustomDropdown label="Gender" icon={Users} name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} />
+                                        <InputField label="First Name" icon={User} name="firstName" value={formData.firstName} onChange={handleChange} required />
+                                        <InputField label="Initial / Last Name" icon={User} name="lastName" value={formData.lastName} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Date of Birth (Original)" icon={Calendar} type="date" name="dobOriginal" value={formData.dobOriginal} onChange={handleChange} required />
-                                        <InputField label="Gmail ID" icon={Mail} name="gmailId" value={formData.gmailId} onChange={handleChange} required placeholder="example@gmail.com" helperText="Secondary backup contact" />
+                                        <InputField label="Date-of-Birth" icon={Calendar} type="date" name="dob" value={formData.dob} onChange={handleChange} required />
+                                        <InputField label="Pincode" icon={MapPin} name="pincode" value={formData.pincode} onChange={handleChange} required />
+                                    </div>
+                                    <TextAreaField label="Home Address" icon={Home} name="homeAddress" value={formData.homeAddress} onChange={handleChange} required />
+                                    <div className="grid-flex">
+                                        <InputField label="Student Mobile Number" icon={Phone} name="studentMobile" value={formData.studentMobile} onChange={handleChange} required />
+                                        <InputField label="Student Mobile Number (Alternate)" icon={Phone} name="studentMobileAlt" value={formData.studentMobileAlt} onChange={handleChange} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Mobile Number" icon={Phone} name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} required placeholder="+91 00000 00000" />
-                                        <CustomDropdown label="Mode" name="admissionMode" value={formData.admissionMode} onChange={handleChange} options={['Regular', 'Parallel Immersive']} />
+                                        <InputField label="Email" icon={Mail} type="email" name="email" value={formData.email} onChange={handleChange} required />
+                                        <CustomDropdown label="How you came to know Hope3?" name="knowledgeSource" value={formData.knowledgeSource} onChange={handleChange} options={['Facebook / Social media', 'Whatsapp Forward', 'School / Teacher', 'Friends / Well wishers', 'Other']} />
                                     </div>
-                                    <CustomFilePicker label="Photograph (Recent & Quality)" name="photographRecent" value={formData.photographRecent} onChange={handleChange} helperText="Passport size image (Max 2MB)" />
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} />
+                                        <CustomDropdown label="District" name="district" value={formData.district} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Physically challenged?" name="physicallyChallenged" value={formData.physicallyChallenged} onChange={handleChange} options={['Yes', 'No']} />
+                                        <CustomDropdown label="Living with?" name="livingWith" value={formData.livingWith} onChange={handleChange} options={['Parents', 'Single parent', 'Orphanage Home', 'In Refugee Camp', 'Other']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Home Region type" name="homeRegionType" value={formData.homeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
+                                        <CustomDropdown label="Course you want to study?" name="courseToStudy" value={formData.courseToStudy} onChange={handleChange} options={['B.E / B.Tech – Computer Science', 'B.E / B.Tech – Information Technology', 'B.E / B.Tech – Electronics', 'B.E / B.Tech – Electrical', 'B.Sc Computer Science', 'B.Sc Maths', 'B.A Political Science', 'B.A History', 'Medical', 'NEET', 'Others']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Ambition (Choice 1)?" name="ambitionChoice1" value={formData.ambitionChoice1} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} />
+                                        <CustomDropdown label="Ambition (Choice 2)?" name="ambitionChoice2" value={formData.ambitionChoice2} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} />
+                                    </div>
+                                    <CustomDropdown label="Are you a First Graduate?" name="isFirstGraduate" value={formData.isFirstGraduate} onChange={handleChange} options={['Yes', 'No']} />
                                 </motion.div>
                             )}
 
                             {step === 2 && (
                                 <motion.div key="s2" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Step 2: Geographic Background</h3>
-                                    <TextAreaField label="Full Address" icon={MapPin} name="fullAddress" value={formData.fullAddress} onChange={handleChange} required />
+                                    <h3 className="step-heading">Page 2: Relative's Information</h3>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Area Type" icon={Home} name="areaType" value={formData.areaType} onChange={handleChange} options={['Urban', 'Rural']} />
-                                        <InputField label="Area" name="area" value={formData.area} onChange={handleChange} />
-                                    </div>
-                                    <div className="grid-flex">
-                                        <InputField label="Landmark" name="landmark" value={formData.landmark} onChange={handleChange} />
-                                        <InputField label="District" name="district" value={formData.district} onChange={handleChange} required />
+                                        <InputField label="Name of Relative" name="relativeName" value={formData.relativeName} onChange={handleChange} required helperText="Father / Mother / Guardian" />
+                                        <CustomDropdown label="Relationship type" name="relationshipType" value={formData.relationshipType} onChange={handleChange} options={['Father', 'Mother', 'Guardian', 'Other']} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Pincode" name="pincode" value={formData.pincode} onChange={handleChange} required helperText="6-digit area code" placeholder="600001" />
-                                        <InputField label="S.No" name="sNo" value={formData.sNo} onChange={handleChange} placeholder="Optional tracking #" />
+                                        <InputField label="Occupation" name="relativeOccupation" value={formData.relativeOccupation} onChange={handleChange} required />
+                                        <InputField label="Mobile Number" name="relativeMobile" value={formData.relativeMobile} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Religion" name="religion" value={formData.religion} onChange={handleChange} />
-                                        <InputField label="Community" name="community" value={formData.community} onChange={handleChange} />
-                                    </div>
-                                    <CustomDropdown label="Physically Challenged" name="physicallyChallenged" value={formData.physicallyChallenged} onChange={handleChange} options={['No', 'Yes']} />
-                                </motion.div>
-                            )}
-
-                            {step === 3 && (
-                                <motion.div key="s3" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Step 3: Family & Guardian Structure</h3>
-                                    <div className="grid-flex">
-                                        <CustomDropdown label="Parent Status" name="parentStatus" value={formData.parentStatus} onChange={handleChange} options={['Both Alive', 'Single Parent', 'Orphan']} />
-                                        <InputField label="Number of Siblings" name="numberOfSiblings" value={formData.numberOfSiblings} onChange={handleChange} type="number" />
-                                    </div>
-                                    <div className="form-sub-container">
-                                        <h4 className="label-sub">Father Information</h4>
-                                        <div className="grid-flex">
-                                            <InputField label="Father Name" name="fatherName" value={formData.fatherName} onChange={handleChange} />
-                                            <InputField label="Occupation" name="fatherOccupation" value={formData.fatherOccupation} onChange={handleChange} />
-                                        </div>
-                                        <InputField label="Contact Number" name="fatherContactNumber" value={formData.fatherContactNumber} onChange={handleChange} />
-                                    </div>
-                                    <div className="form-sub-container">
-                                        <h4 className="label-sub">Mother Information</h4>
-                                        <div className="grid-flex">
-                                            <InputField label="Mother Name" name="motherName" value={formData.motherName} onChange={handleChange} />
-                                            <InputField label="Occupation" name="motherOccupation" value={formData.motherOccupation} onChange={handleChange} />
-                                        </div>
-                                        <InputField label="Contact Number" name="motherContactNumber" value={formData.motherContactNumber} onChange={handleChange} />
-                                    </div>
-                                    <div className="form-sub-container">
-                                        <h4 className="label-sub">Guardian Information</h4>
-                                        <div className="grid-flex">
-                                            <InputField label="Guardian Name" name="guardianName" value={formData.guardianName} onChange={handleChange} />
-                                            <InputField label="Occupation" name="guardianOccupation" value={formData.guardianOccupation} onChange={handleChange} />
-                                        </div>
-                                        <InputField label="Contact Number" name="guardianContactNumber" value={formData.guardianContactNumber} onChange={handleChange} />
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {step === 4 && (
-                                <motion.div key="s4" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Step 4: Academic Journey</h3>
-                                    <InputField label="College" icon={Building} name="collegeName" value={formData.collegeName} onChange={handleChange} required />
-                                    <TextAreaField label="College Address" icon={MapPin} name="collegeAddress" value={formData.collegeAddress} onChange={handleChange} />
-                                    <div className="grid-flex">
-                                        <InputField label="Course" icon={GraduationCap} name="courseName" value={formData.courseName} onChange={handleChange} required />
-                                        <InputField label="Major" icon={Briefcase} name="majorSubject" value={formData.majorSubject} onChange={handleChange} required />
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {step === 5 && (
-                                <motion.div key="s5" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Step 5: Financial & Banking</h3>
-                                    <div className="form-sub-container">
-                                        <h4 className="label-sub">Direct Account Details</h4>
-                                        <InputField label="Which Bank you are having savings account?" name="bankNameSavings" value={formData.bankNameSavings} onChange={handleChange} placeholder="Main savings account #" />
-                                        <div className="grid-flex">
-                                            <InputField label="Bank Account Number" name="bankAccountNumber" value={formData.bankAccountNumber} onChange={handleChange} placeholder="Main savings account #" />
-                                            <InputField label="Bank - IFSC" name="bankIfscCode" value={formData.bankIfscCode} onChange={handleChange} helperText="11 characters" placeholder="ABCD0123456" />
-                                        </div>
-                                    </div>
-                                    <div className="form-sub-container">
-                                        <h4 className="label-sub">Parent Account Tracking</h4>
-                                        <div className="grid-flex">
-                                            <InputField label="Parent Account Number" name="parentAccountNumber" value={formData.parentAccountNumber} onChange={handleChange} placeholder="Guardian's account #" />
-                                            <InputField label="Parent IFSC" name="parentIfscCode" value={formData.parentIfscCode} onChange={handleChange} helperText="11 characters" />
-                                        </div>
-                                    </div>
-                                    <div className="form-sub-container">
-                                        <h4 className="label-sub">Academic Funding Status</h4>
-                                        <div className="grid-flex">
-                                            <CustomDropdown label="Academic Funding Maturity" name="academicFundingMaturity" value={formData.academicFundingMaturity} onChange={handleChange} options={['No', 'Yes']} />
-                                            <InputField label="Funding %" name="fundingPercentage" value={formData.fundingPercentage} onChange={handleChange} type="number" />
-                                        </div>
-                                        <div className="grid-flex">
-                                            <InputField label="Amount (Approx)" icon={DollarSign} name="fundingAmountApprox" value={formData.fundingAmountApprox} onChange={handleChange} />
-                                            <InputField label="Funders" icon={Users} name="fundersNames" value={formData.fundersNames} onChange={handleChange} />
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
-
-                            {step === 6 && (
-                                <motion.div key="s6" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Step 6: Future & Admin Control</h3>
-                                    <div className="grid-flex">
-                                        <CustomDropdown label="Currently Working" name="currentlyWorking" value={formData.currentlyWorking} onChange={handleChange} options={['No', 'Yes']} />
-                                        <InputField label="Location" icon={MapPin} name="workLocation" value={formData.workLocation} onChange={handleChange} />
+                                        <InputField label="Email id" name="relativeEmail" value={formData.relativeEmail} onChange={handleChange} />
+                                        <CustomDropdown label="Educational level" name="relativeEducation" value={formData.relativeEducation} onChange={handleChange} options={['Below 10th', '10th Standard', '12th Standard', 'Bachelor degree', 'Master degree']} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Designation" icon={Briefcase} name="designation" value={formData.designation} onChange={handleChange} />
-                                        <CustomDropdown label="Is Married" name="isMarried" value={formData.isMarried} onChange={handleChange} options={['No', 'Yes']} />
-                                    </div>
-                                    <div className="grid-flex">
-                                        <CustomDropdown label="Are you on track" icon={Target} name="isOnTrack" value={formData.isOnTrack} onChange={handleChange} options={['Yes', 'No']} />
-                                        <CustomDropdown label="Willing to do volunteering" icon={Heart} name="willingToVolunteer" value={formData.willingToVolunteer} onChange={handleChange} options={['Yes', 'No']} />
-                                    </div>
-                                    <InputField label="Folder Link" icon={Link} name="folderLink" value={formData.folderLink} onChange={handleChange} placeholder="Drive / Cloud Link" />
-                                    <TextAreaField label="Other Notes" icon={FileText} name="otherNotes" value={formData.otherNotes} onChange={handleChange} />
-                                    <TextAreaField label="Remarks" name="adminRemarks" value={formData.adminRemarks} onChange={handleChange} />
-                                    <div className="compliance-box" style={{ marginTop: '2rem' }}>
-                                        <ShieldCheck size={20} className="comp-icon" />
-                                        <p>Comprehensive Verification: I declare all the provided data is verified for HOPE3 internal records.</p>
+                                        <InputField label="Total members in family" type="number" name="familyMembersCount" value={formData.familyMembersCount} onChange={handleChange} required />
+                                        <InputField label="Total Family Income (Monthly)" type="number" name="familyIncomeMonthly" value={formData.familyIncomeMonthly} onChange={handleChange} required />
                                     </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
                         <div className="form-actions-row">
                             {step > 1 && <button type="button" onClick={handlePrev} className="btn-secondary-cln"><ArrowLeft size={18} /> Previous</button>}
-                            {step < 6 ? (
-                                <button type="button" onClick={handleNext} className="btn-primary-cln">Continue <ArrowRight size={18} /></button>
+                            {step < 2 ? (
+                                <button type="button" onClick={handleNext} className="btn-primary-cln">Next Page <ArrowRight size={18} /></button>
                             ) : (
-                                <button type="submit" className="btn-primary-cln submit-color">Finalize Enrollment</button>
+                                <button type="submit" className="btn-primary-cln submit-color">Submit Application</button>
                             )}
                         </div>
                     </form>
@@ -581,84 +425,7 @@ const localStyles = (
         .brand-name-cln { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.1rem; color: #111827; text-transform: uppercase; letter-spacing: 0.05em; }
         .admission-intro { text-align: center; margin-bottom: 4rem; }
         
-        /* Image Grid Styles */
-        .admission-image-grid {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto 3.5rem;
-            display: flex;
-            gap: 1.5rem;
-            flex-direction: column;
-        }
-        
-        .admission-main-image {
-            position: relative;
-            width: 100%;
-            border-radius: 32px;
-            overflow: hidden;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 15px 30px rgba(0, 209, 193, 0.08);
-            border: 2px solid #fff;
-        }
-        
-        .admission-main-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
-            aspect-ratio: 21/9;
-        }
-        
-        .admission-side-images {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
-        }
-        
-        .admission-side-image {
-            position: relative;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-            border: 1.5px solid #f1f5f9;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .admission-side-image:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.12);
-        }
-        
-        .admission-side-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            object-fit: cover;
-            aspect-ratio: 16/10;
-        }
-        
-        .image-label {
-            position: absolute;
-            bottom: 1rem;
-            left: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 0.6rem 1rem;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        @media (max-width: 768px) {
-            .admission-side-images {
-                grid-template-columns: 1fr;
-            }
-        }
+
         .title-cln { font-size: 2.2rem; font-weight: 950; color: #111827; margin-bottom: 2rem; }
         
         /* Step Tracker Visual */
@@ -727,24 +494,7 @@ const localStyles = (
         .dropdown-opt:hover { background: #f1f5f9; color: var(--primary); }
         .dropdown-opt.selected { background: rgba(0, 209, 193, 0.08); color: var(--primary); }
 
-        .file-picker-enhanced {
-            width: 100%; min-height: 72px; background: #f8fafc; border: 2px dashed #b2bec3; border-radius: 16px; 
-            cursor: pointer; transition: all 0.3s ease; overflow: hidden; display: flex; align-items: center; justify-content: flex-start;
-        }
-        .file-picker-enhanced:hover { border-color: var(--primary); background: rgba(0, 209, 193, 0.02); }
-        .file-picker-enhanced.has-file { border-style: solid; border-color: var(--primary); background: #fff; }
-        .file-placeholder-cln { display: flex; align-items: center; gap: 1.2rem; padding: 0.8rem 1.4rem; }
-        .upload-icon-anim { color: var(--primary); }
-        .text-stack-cln { display: flex; flex-direction: column; }
-        .main-text { font-size: 0.95rem; font-weight: 800; color: #1e293b; }
-        .sub-text { font-size: 0.8rem; font-weight: 600; color: #94a3b8; margin-top: 2px; }
-        .file-info-cln { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 1.2rem 1.5rem; }
-        .file-preview-cln { display: flex; align-items: center; gap: 1rem; }
-        .file-icon-pulse { color: var(--primary); animation: pulse 2s infinite; }
-        .file-name-truncate { font-size: 0.95rem; font-weight: 700; color: #1e293b; max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .clear-file-btn { width: 32px; height: 32px; border-radius: 50%; border: none; background: #fee2e2; color: #ef4444; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; }
-        .clear-file-btn:hover { transform: scale(1.1); background: #ef4444; color: #fff; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+
         .grid-flex { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         .compliance-box { display: flex; gap: 1.2rem; padding: 1.5rem; background: rgba(0,209,193,0.04); border: 1px solid rgba(0,209,193,0.08); border-radius: 20px; align-items: center; }
         .compliance-box p { font-size: 0.85rem; color: #0d9488; font-weight: 700; line-height: 1.6; }
