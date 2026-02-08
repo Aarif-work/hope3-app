@@ -151,7 +151,90 @@ const StudentAdmission = () => {
         familyMembersCount: '',
         familyIncomeMonthly: '',
         relationshipType: '',
-        relativeEducation: ''
+        relativeEducation: '',
+        // Page 3: 10th Education Details
+        tenthSchoolName: '',
+        tenthSchoolLocation: '',
+        tenthRegistrationNumber: '',
+        tenthDistrictStudied: '',
+        tenthSchoolRegionType: '',
+        tenthSchoolType: '',
+        tenthYearPassed: '',
+        tenthCourseCompleted: '',
+        tenthSubject1Marks: '',
+        tenthSubject2Marks: '',
+        tenthSubject3Marks: '',
+        tenthSubject4Marks: '',
+        tenthSubject5Marks: '',
+        tenthTotalMarks: '',
+        // Page 4: Diploma Details (Conditional - only if Diploma selected)
+        diplomaCollegeName: '',
+        diplomaCollegeLocation: '',
+        diplomaPercentage: '',
+        diplomaDistrictStudied: '',
+        diplomaCollegeRegionType: '',
+        diplomaCourseStudied: '',
+        diplomaYearPassed: '',
+        // Page 4/5: 11th Education Details (Conditional - only if 11th selected)
+        eleventhSchoolName: '',
+        eleventhSchoolLocation: '',
+        eleventhRegistrationNumber: '',
+        eleventhDistrictStudied: '',
+        eleventhSchoolRegionType: '',
+        eleventhSchoolType: '',
+        eleventhYearPassed: '',
+        eleventhSubjects: '',
+        eleventhEngineeringCutoff: '',
+        eleventhNeetScore: '',
+        eleventhAgriCutoff: '',
+        eleventhSubject1Marks: '',
+        eleventhSubject2Marks: '',
+        // 11th Major Subject Marks (conditional based on subjects selected)
+        eleventhMathematicsMarks: '',
+        eleventhPhysicsMarks: '',
+        eleventhChemistryMarks: '',
+        eleventhBiologyMarks: '',
+        eleventhStatisticsMarks: '',
+        eleventhAccountancyMarks: '',
+        eleventhCommerceMarks: '',
+        eleventhEconomicsMarks: '',
+        eleventhHistoryMarks: '',
+        eleventhBusinessMathsMarks: '',
+        eleventhPoliticalScienceMarks: '',
+        eleventhBotanyMarks: '',
+        eleventhZoologyMarks: '',
+        eleventhComputerScienceMarks: '',
+        eleventhTotalMarks: '',
+        // Page 4/5: 12th Education Details (Conditional - only if 12th selected)
+        twelfthSchoolName: '',
+        twelfthSchoolLocation: '',
+        twelfthRegistrationNumber: '',
+        twelfthDistrictStudied: '',
+        twelfthSchoolRegionType: '',
+        twelfthSchoolType: '',
+        twelfthYearPassed: '',
+        twelfthSubjects: '',
+        twelfthEngineeringCutoff: '',
+        twelfthNeetScore: '',
+        twelfthAgriCutoff: '',
+        twelfthSubject1Marks: '',
+        twelfthSubject2Marks: '',
+        // 12th Major Subject Marks (conditional based on subjects selected)
+        twelfthMathematicsMarks: '',
+        twelfthPhysicsMarks: '',
+        twelfthChemistryMarks: '',
+        twelfthBiologyMarks: '',
+        twelfthStatisticsMarks: '',
+        twelfthAccountancyMarks: '',
+        twelfthCommerceMarks: '',
+        twelfthEconomicsMarks: '',
+        twelfthHistoryMarks: '',
+        twelfthBusinessMathsMarks: '',
+        twelfthPoliticalScienceMarks: '',
+        twelfthBotanyMarks: '',
+        twelfthZoologyMarks: '',
+        twelfthComputerScienceMarks: '',
+        twelfthTotalMarks: ''
     });
 
 
@@ -183,6 +266,19 @@ const StudentAdmission = () => {
         setTimeout(() => setCopying(false), 2000);
     };
 
+    // Helper functions for dynamic major subjects
+    const getMajorSubjectList = (subjectString) => {
+        if (!subjectString) return [];
+        return subjectString.split(' / ').map(s => s.trim());
+    };
+
+    const getSubjectKey = (grade, subject) => {
+        // Map subject name to formData key (e.g., 'Mathematics' -> 'eleventhMathematicsMarks')
+        // Remove special characters like '&' before normalizing
+        const normalized = subject.replace(/[&\s]+/g, '');
+        return `${grade}${normalized}Marks`;
+    };
+
     const handleChange = (e) => {
         const { name, value, type, files } = e.target;
         if (type === 'file') {
@@ -191,6 +287,11 @@ const StudentAdmission = () => {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
     };
+
+    // Calculate total steps based on course completed
+    const totalSteps = formData.tenthCourseCompleted === 'Diploma' ? 5 :
+        formData.tenthCourseCompleted === '11th' ? 5 :
+            formData.tenthCourseCompleted === '12th' ? 6 : 3;
 
     const handleNext = () => setStep(prev => prev + 1);
     const handlePrev = () => setStep(prev => prev - 1);
@@ -255,6 +356,152 @@ const StudentAdmission = () => {
                         <div className="p-row"><span>Family Members:</span> <strong>{formData.familyMembersCount}</strong></div>
                         <div className="p-row"><span>Monthly Income:</span> <strong>{formData.familyIncomeMonthly}</strong></div>
                     </div>
+
+                    <div className="print-section">
+                        <h3 className="section-divider">10th Education Details</h3>
+                        <div className="p-row"><span>School Name:</span> <strong>{formData.tenthSchoolName}</strong></div>
+                        <div className="p-row"><span>School Location:</span> <strong>{formData.tenthSchoolLocation}</strong></div>
+                        <div className="p-row"><span>Registration Number:</span> <strong>{formData.tenthRegistrationNumber}</strong></div>
+                        <div className="p-grid">
+                            <div className="p-row"><span>District Studied:</span> <strong>{formData.tenthDistrictStudied}</strong></div>
+                            <div className="p-row"><span>School Region:</span> <strong>{formData.tenthSchoolRegionType}</strong></div>
+                        </div>
+                        <div className="p-grid">
+                            <div className="p-row"><span>School Type:</span> <strong>{formData.tenthSchoolType}</strong></div>
+                            <div className="p-row"><span>Year Passed:</span> <strong>{formData.tenthYearPassed}</strong></div>
+                        </div>
+                        <div className="p-row"><span>Course Completed:</span> <strong>{formData.tenthCourseCompleted}</strong></div>
+                        <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Subject Marks</h4>
+                        <div className="p-grid">
+                            <div className="p-row"><span>Language:</span> <strong>{formData.tenthSubject1Marks}</strong></div>
+                            <div className="p-row"><span>English:</span> <strong>{formData.tenthSubject2Marks}</strong></div>
+                        </div>
+                        <div className="p-grid">
+                            <div className="p-row"><span>Mathematics:</span> <strong>{formData.tenthSubject3Marks}</strong></div>
+                            <div className="p-row"><span>Science:</span> <strong>{formData.tenthSubject4Marks}</strong></div>
+                        </div>
+                        <div className="p-grid">
+                            <div className="p-row"><span>Social Science:</span> <strong>{formData.tenthSubject5Marks}</strong></div>
+                            <div className="p-row"><span>Total Marks:</span> <strong>{formData.tenthTotalMarks}</strong></div>
+                        </div>
+                    </div>
+
+                    {formData.tenthCourseCompleted === 'Diploma' && (
+                        <div className="print-section">
+                            <h3 className="section-divider">Diploma Details</h3>
+                            <div className="p-row"><span>College Name:</span> <strong>{formData.diplomaCollegeName}</strong></div>
+                            <div className="p-row"><span>College Location:</span> <strong>{formData.diplomaCollegeLocation}</strong></div>
+                            <div className="p-grid">
+                                <div className="p-row"><span>Percentage:</span> <strong>{formData.diplomaPercentage}%</strong></div>
+                                <div className="p-row"><span>District Studied:</span> <strong>{formData.diplomaDistrictStudied}</strong></div>
+                            </div>
+                            <div className="p-grid">
+                                <div className="p-row"><span>College Region:</span> <strong>{formData.diplomaCollegeRegionType}</strong></div>
+                                <div className="p-row"><span>Course Studied:</span> <strong>{formData.diplomaCourseStudied}</strong></div>
+                            </div>
+                            <div className="p-row"><span>Year Passed:</span> <strong>{formData.diplomaYearPassed}</strong></div>
+                        </div>
+                    )}
+
+                    {(formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th') && (
+                        <div className="print-section">
+                            <h3 className="section-divider">11th Education Details</h3>
+                            <div className="p-row"><span>School Name:</span> <strong>{formData.eleventhSchoolName}</strong></div>
+                            <div className="p-row"><span>School Location:</span> <strong>{formData.eleventhSchoolLocation}</strong></div>
+                            <div className="p-row"><span>Registration Number:</span> <strong>{formData.eleventhRegistrationNumber}</strong></div>
+                            <div className="p-grid">
+                                <div className="p-row"><span>District Studied:</span> <strong>{formData.eleventhDistrictStudied}</strong></div>
+                                <div className="p-row"><span>School Region:</span> <strong>{formData.eleventhSchoolRegionType}</strong></div>
+                            </div>
+                            <div className="p-grid">
+                                <div className="p-row"><span>School Type:</span> <strong>{formData.eleventhSchoolType}</strong></div>
+                                <div className="p-row"><span>Year Passed:</span> <strong>{formData.eleventhYearPassed}</strong></div>
+                            </div>
+                            <div className="p-row"><span>Subjects:</span> <strong>{formData.eleventhSubjects}</strong></div>
+                            <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Subject Marks & Cutoffs</h4>
+                            <div className="p-grid">
+                                <div className="p-row"><span>Tamil/Language:</span> <strong>{formData.eleventhSubject1Marks}</strong></div>
+                                <div className="p-row"><span>English:</span> <strong>{formData.eleventhSubject2Marks}</strong></div>
+                            </div>
+                            {(formData.eleventhEngineeringCutoff || formData.eleventhNeetScore || formData.eleventhAgriCutoff) && (
+                                <div className="p-grid">
+                                    {formData.eleventhEngineeringCutoff && <div className="p-row"><span>Engineering Cutoff:</span> <strong>{formData.eleventhEngineeringCutoff}</strong></div>}
+                                    {formData.eleventhNeetScore && <div className="p-row"><span>NEET Score:</span> <strong>{formData.eleventhNeetScore}</strong></div>}
+                                    {formData.eleventhAgriCutoff && <div className="p-row"><span>Agri Cutoff:</span> <strong>{formData.eleventhAgriCutoff}</strong></div>}
+                                </div>
+                            )}
+                            {(formData.eleventhMathematicsMarks || formData.eleventhTotalMarks) && (
+                                <>
+                                    <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Major Subject Marks</h4>
+                                    <div className="p-grid">
+                                        <div className="p-row"><span>Mathematics:</span> <strong>{formData.eleventhMathematicsMarks}</strong></div>
+                                        <div className="p-row"><span>Physics:</span> <strong>{formData.eleventhPhysicsMarks}</strong></div>
+                                    </div>
+                                    <div className="p-grid">
+                                        <div className="p-row"><span>Chemistry:</span> <strong>{formData.eleventhChemistryMarks}</strong></div>
+                                        <div className="p-row"><span>{formData.eleventhBiologyMarks ? 'Biology' : 'Statistics'}:</span> <strong>{formData.eleventhBiologyMarks || formData.eleventhStatisticsMarks}</strong></div>
+                                    </div>
+                                    <div className="p-row"><span>Total Marks:</span> <strong>{formData.eleventhTotalMarks}</strong></div>
+                                </>
+                            )}
+                        </div>
+                    )}
+
+                    {formData.tenthCourseCompleted === '12th' && (
+                        <div className="print-section">
+                            <h3 className="section-divider">12th Education Details</h3>
+                            <div className="p-row"><span>School Name:</span> <strong>{formData.twelfthSchoolName}</strong></div>
+                            <div className="p-row"><span>School Location:</span> <strong>{formData.twelfthSchoolLocation}</strong></div>
+                            <div className="p-row"><span>Registration Number:</span> <strong>{formData.twelfthRegistrationNumber}</strong></div>
+                            <div className="p-grid">
+                                <div className="p-row"><span>District Studied:</span> <strong>{formData.twelfthDistrictStudied}</strong></div>
+                                <div className="p-row"><span>School Region:</span> <strong>{formData.twelfthSchoolRegionType}</strong></div>
+                            </div>
+                            <div className="p-grid">
+                                <div className="p-row"><span>School Type:</span> <strong>{formData.twelfthSchoolType}</strong></div>
+                                <div className="p-row"><span>Year Passed:</span> <strong>{formData.twelfthYearPassed}</strong></div>
+                            </div>
+                            <div className="p-row"><span>Subjects:</span> <strong>{formData.twelfthSubjects}</strong></div>
+                            <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Subject Marks & Cutoffs</h4>
+                            <div className="p-grid">
+                                <div className="p-row"><span>Tamil/Language:</span> <strong>{formData.twelfthSubject1Marks}</strong></div>
+                                <div className="p-row"><span>English:</span> <strong>{formData.twelfthSubject2Marks}</strong></div>
+                            </div>
+                            {(formData.twelfthEngineeringCutoff || formData.twelfthNeetScore || formData.twelfthAgriCutoff) && (
+                                <div className="p-grid">
+                                    {formData.twelfthEngineeringCutoff && <div className="p-row"><span>Engineering Cutoff:</span> <strong>{formData.twelfthEngineeringCutoff}</strong></div>}
+                                    {formData.twelfthNeetScore && <div className="p-row"><span>NEET Score:</span> <strong>{formData.twelfthNeetScore}</strong></div>}
+                                    {formData.twelfthAgriCutoff && <div className="p-row"><span>Agri Cutoff:</span> <strong>{formData.twelfthAgriCutoff}</strong></div>}
+                                </div>
+                            )}
+                            {(formData.twelfthMathematicsMarks || formData.twelfthCommerceMarks) && (
+                                <>
+                                    <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Major Subject Marks</h4>
+                                    {formData.twelfthCommerceMarks && (
+                                        <>
+                                            <div className="p-grid">
+                                                <div className="p-row"><span>Commerce:</span> <strong>{formData.twelfthCommerceMarks}</strong></div>
+                                                <div className="p-row"><span>Economics:</span> <strong>{formData.twelfthEconomicsMarks}</strong></div>
+                                            </div>
+                                            <div className="p-grid">
+                                                <div className="p-row"><span>Accountancy:</span> <strong>{formData.twelfthAccountancyMarks}</strong></div>
+                                                <div className="p-row"><span>Statistics:</span> <strong>{formData.twelfthStatisticsMarks}</strong></div>
+                                            </div>
+                                        </>
+                                    )}
+                                    {formData.twelfthMathematicsMarks && (
+                                        <div className="p-grid">
+                                            <div className="p-row"><span>Mathematics:</span> <strong>{formData.twelfthMathematicsMarks}</strong></div>
+                                            <div className="p-row"><span>Physics:</span> <strong>{formData.twelfthPhysicsMarks}</strong></div>
+                                            <div className="p-row"><span>Chemistry:</span> <strong>{formData.twelfthChemistryMarks}</strong></div>
+                                            <div className="p-row"><span>{formData.twelfthBiologyMarks ? 'Biology' : 'Statistics'}:</span> <strong>{formData.twelfthBiologyMarks || formData.twelfthStatisticsMarks}</strong></div>
+                                        </div>
+                                    )}
+                                    <div className="p-row"><span>Total Marks:</span> <strong>{formData.twelfthTotalMarks}</strong></div>
+                                </>
+                            )}
+                        </div>
+                    )}
 
                     <div className="print-footer">
                         <div className="signature-box">
@@ -321,12 +568,12 @@ const StudentAdmission = () => {
                     <div className="admission-intro">
                         <h2 className="title-cln">Scholarship Application Form</h2>
                         <div className="step-tracker-visual">
-                            {[1, 2].map(s => (
+                            {Array.from({ length: totalSteps }, (_, i) => i + 1).map(s => (
                                 <React.Fragment key={s}>
                                     <div className={`step-node ${s === step ? 'active' : s < step ? 'completed' : ''}`}>
                                         {s < step ? <CheckCircle size={16} /> : s}
                                     </div>
-                                    {s < 2 && <div className={`step-connector ${s < step ? 'filled' : ''}`}></div>}
+                                    {s < totalSteps && <div className={`step-connector ${s < step ? 'filled' : ''}`}></div>}
                                 </React.Fragment>
                             ))}
                         </div>
@@ -395,10 +642,218 @@ const StudentAdmission = () => {
                                     </div>
                                 </motion.div>
                             )}
+
+                            {step === 3 && (
+                                <motion.div key="s3" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+                                    <h3 className="step-heading">Page 3: 10th Education Details</h3>
+                                    <div className="grid-flex">
+                                        <InputField label="10th School Name" name="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} required />
+                                        <InputField label="10th School Location" name="tenthSchoolLocation" value={formData.tenthSchoolLocation} onChange={handleChange} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <InputField label="10th Registration number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} />
+                                        <CustomDropdown label="District where you studied 10th standard?" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="School Region type" name="tenthSchoolRegionType" value={formData.tenthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
+                                        <CustomDropdown label="10th standard school type" name="tenthSchoolType" value={formData.tenthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Year passed 10th Standard" name="tenthYearPassed" value={formData.tenthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
+                                        <CustomDropdown label="Which course did you complete?" name="tenthCourseCompleted" value={formData.tenthCourseCompleted} onChange={handleChange} options={['Diploma', '11th', '12th']} />
+                                    </div>
+
+                                    <div className="form-sub-container">
+                                        <h4 className="label-sub">10th Standard Subject Marks</h4>
+                                        <div className="grid-flex">
+                                            <InputField label="Subject 1: Language marks" type="number" name="tenthSubject1Marks" value={formData.tenthSubject1Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 2: English language marks" type="number" name="tenthSubject2Marks" value={formData.tenthSubject2Marks} onChange={handleChange} required />
+                                        </div>
+                                        <div className="grid-flex">
+                                            <InputField label="Subject 3: Mathematics marks" type="number" name="tenthSubject3Marks" value={formData.tenthSubject3Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 4: Science marks" type="number" name="tenthSubject4Marks" value={formData.tenthSubject4Marks} onChange={handleChange} required />
+                                        </div>
+                                        <div className="grid-flex">
+                                            <InputField label="Subject 5: Social Science marks" type="number" name="tenthSubject5Marks" value={formData.tenthSubject5Marks} onChange={handleChange} required />
+                                            <InputField label="10th Total Marks" type="number" name="tenthTotalMarks" value={formData.tenthTotalMarks} onChange={handleChange} required />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {step === 4 && formData.tenthCourseCompleted === 'Diploma' && (
+                                <motion.div key="s4" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+                                    <h3 className="step-heading">Page 4: Diploma Details</h3>
+                                    <div className="grid-flex">
+                                        <InputField label="College Name" name="diplomaCollegeName" value={formData.diplomaCollegeName} onChange={handleChange} required />
+                                        <InputField label="College Location" name="diplomaCollegeLocation" value={formData.diplomaCollegeLocation} onChange={handleChange} required />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <InputField label="Diploma Percentage" type="number" name="diplomaPercentage" value={formData.diplomaPercentage} onChange={handleChange} required helperText="Enter percentage (e.g., 85.5)" />
+                                        <CustomDropdown label="District where you studied Diploma?" name="diplomaDistrictStudied" value={formData.diplomaDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="College Region type" name="diplomaCollegeRegionType" value={formData.diplomaCollegeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
+                                        <CustomDropdown label="Course you studied?" name="diplomaCourseStudied" value={formData.diplomaCourseStudied} onChange={handleChange} options={['Computer Engineering', 'Electrical Engineering', 'Electronics & Communication Engineering', 'Electrical & Telecommunication Engineering', 'Information Technology', 'Electrical and Electronics Engineering', 'Computer Science and Engineering', 'Other']} />
+                                    </div>
+                                    <CustomDropdown label="Year passed College" name="diplomaYearPassed" value={formData.diplomaYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
+                                </motion.div>
+                            )}
+
+                            {step === 4 && (formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th') && (
+                                <motion.div key="s4-11th" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+                                    <h3 className="step-heading">Page 4: 11th Education Details</h3>
+                                    <div className="grid-flex">
+                                        <InputField label="11th School Name" name="eleventhSchoolName" value={formData.eleventhSchoolName} onChange={handleChange} required />
+                                        <InputField label="11th School Location" name="eleventhSchoolLocation" value={formData.eleventhSchoolLocation} onChange={handleChange} required />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <InputField label="11th Registration Number" name="eleventhRegistrationNumber" value={formData.eleventhRegistrationNumber} onChange={handleChange} />
+                                        <CustomDropdown label="District where you studied 11th standard?" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="School Region type" name="eleventhSchoolRegionType" value={formData.eleventhSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
+                                        <CustomDropdown label="11th standard school type" name="eleventhSchoolType" value={formData.eleventhSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Year passed 11th Standard" name="eleventhYearPassed" value={formData.eleventhYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
+                                        <CustomDropdown label="Select your subjects" name="eleventhSubjects" value={formData.eleventhSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} />
+                                    </div>
+
+
+
+                                    <div className="form-sub-container">
+                                        <h4 className="label-sub">Cutoff Scores (Optional - based on your stream)</h4>
+                                        <div className="grid-flex">
+                                            <InputField label="Engineering Cutoff" type="number" name="eleventhEngineeringCutoff" value={formData.eleventhEngineeringCutoff} onChange={handleChange} helperText="For engineering students" />
+                                            <InputField label="NEET Score" type="number" name="eleventhNeetScore" value={formData.eleventhNeetScore} onChange={handleChange} helperText="For medical students" />
+                                        </div>
+                                        <InputField label="Agri Cutoff" type="number" name="eleventhAgriCutoff" value={formData.eleventhAgriCutoff} onChange={handleChange} helperText="For agriculture students" />
+                                    </div>
+
+                                    <div className="form-sub-container">
+                                        <h4 className="label-sub">11th Standard Subject Marks</h4>
+                                        <div className="grid-flex">
+                                            <InputField label="Subject 1: Tamil / Language marks" type="number" name="eleventhSubject1Marks" value={formData.eleventhSubject1Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 2: English marks" type="number" name="eleventhSubject2Marks" value={formData.eleventhSubject2Marks} onChange={handleChange} required />
+                                        </div>
+
+                                        {/* Dynamic Major Subject Marks - Shows inside the same container */}
+                                        {formData.eleventhSubjects && (
+                                            <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'rgba(0, 209, 193, 0.03)', borderRadius: '12px', border: '1px dashed var(--primary)' }}>
+                                                <h4 className="label-sub" style={{ color: 'var(--primary)', fontWeight: '700', marginBottom: '1rem' }}>Major Subjects Marks</h4>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                                                    {getMajorSubjectList(formData.eleventhSubjects).map((subject, idx) => (
+                                                        <InputField
+                                                            key={idx}
+                                                            label={`11th ${subject} Marks`}
+                                                            type="number"
+                                                            name={getSubjectKey('eleventh', subject)}
+                                                            value={formData[getSubjectKey('eleventh', subject)]}
+                                                            onChange={handleChange}
+                                                            required
+                                                        />
+                                                    ))}
+                                                    <InputField label="11th Total Marks" type="number" name="eleventhTotalMarks" value={formData.eleventhTotalMarks} onChange={handleChange} required />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {step === 5 && formData.tenthCourseCompleted === '12th' && (
+                                <motion.div key="s5-12th" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+                                    <h3 className="step-heading">Page 5: 12th Education Details</h3>
+                                    <div className="grid-flex">
+                                        <InputField label="12th School Name" name="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} required />
+                                        <InputField label="12th School Location" name="twelfthSchoolLocation" value={formData.twelfthSchoolLocation} onChange={handleChange} required />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <InputField label="12th Registration Number" name="twelfthRegistrationNumber" value={formData.twelfthRegistrationNumber} onChange={handleChange} />
+                                        <CustomDropdown label="District where you studied 12th standard?" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="School Region type" name="twelfthSchoolRegionType" value={formData.twelfthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
+                                        <CustomDropdown label="12th standard school type" name="twelfthSchoolType" value={formData.twelfthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} />
+                                    </div>
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Year passed 12th Standard" name="twelfthYearPassed" value={formData.twelfthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
+                                        <CustomDropdown label="Select your subjects" name="twelfthSubjects" value={formData.twelfthSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} />
+                                    </div>
+
+
+
+                                    <div className="form-sub-container">
+                                        <h4 className="label-sub">Cutoff Scores (Optional - based on your stream)</h4>
+                                        <div className="grid-flex">
+                                            <InputField label="Engineering Cutoff" type="number" name="twelfthEngineeringCutoff" value={formData.twelfthEngineeringCutoff} onChange={handleChange} helperText="For engineering students" />
+                                            <InputField label="NEET Score" type="number" name="twelfthNeetScore" value={formData.twelfthNeetScore} onChange={handleChange} helperText="For medical students" />
+                                        </div>
+                                        <InputField label="Agri Cutoff" type="number" name="twelfthAgriCutoff" value={formData.twelfthAgriCutoff} onChange={handleChange} helperText="For agriculture students" />
+                                    </div>
+
+                                    <div className="form-sub-container">
+                                        <h4 className="label-sub">12th Standard Subject Marks</h4>
+                                        <div className="grid-flex">
+                                            <InputField label="Subject 1: Tamil / Language marks" type="number" name="twelfthSubject1Marks" value={formData.twelfthSubject1Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 2: English marks" type="number" name="twelfthSubject2Marks" value={formData.twelfthSubject2Marks} onChange={handleChange} required />
+                                        </div>
+
+                                        {/* Dynamic Major Subject Marks - Shows inside the same container */}
+                                        {formData.twelfthSubjects && (
+                                            <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: 'rgba(0, 209, 193, 0.03)', borderRadius: '12px', border: '1px dashed var(--primary)' }}>
+                                                <h4 className="label-sub" style={{ color: 'var(--primary)', fontWeight: '700', marginBottom: '1rem' }}>Major Subjects Marks</h4>
+                                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                                                    {getMajorSubjectList(formData.twelfthSubjects).map((subject, idx) => (
+                                                        <InputField
+                                                            key={idx}
+                                                            label={`12th ${subject} Marks`}
+                                                            type="number"
+                                                            name={getSubjectKey('twelfth', subject)}
+                                                            value={formData[getSubjectKey('twelfth', subject)]}
+                                                            onChange={handleChange}
+                                                            required
+                                                        />
+                                                    ))}
+                                                    <InputField label="12th Total Marks" type="number" name="twelfthTotalMarks" value={formData.twelfthTotalMarks} onChange={handleChange} required />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {step === totalSteps && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th') && (
+                                <motion.div key="completion-step" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+                                    <h3 className="step-heading">Submit Application</h3>
+                                    <div className="compliance-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', padding: '2.5rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                            <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                                            <div>
+                                                <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>English</h4>
+                                                <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
+                                                    Please ensure the information you provided is correct before submitting the form.
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div style={{ width: '100%', height: '1px', background: 'rgba(0, 209, 193, 0.2)' }}></div>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                            <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                                            <div>
+                                                <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>Tamil</h4>
+                                                <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
+                                                    படிவத்தை சமர்ப்பிக்கும் முன் நீங்கள் வழங்கிய தகவல்கள் சரியானவை என்பதை உறுதிப்படுத்தவும்.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
                         </AnimatePresence>
                         <div className="form-actions-row">
                             {step > 1 && <button type="button" onClick={handlePrev} className="btn-secondary-cln"><ArrowLeft size={18} /> Previous</button>}
-                            {step < 2 ? (
+                            {step < totalSteps ? (
                                 <button type="button" onClick={handleNext} className="btn-primary-cln">Next Page <ArrowRight size={18} /></button>
                             ) : (
                                 <button type="submit" className="btn-primary-cln submit-color">Submit Application</button>
