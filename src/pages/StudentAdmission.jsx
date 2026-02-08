@@ -9,7 +9,9 @@ import logo from '../assets/hope logo.png';
 const InputField = memo(({ label, icon: Icon, helperText, ...props }) => (
     <div className="form-group-admission">
         <div className="label-row-cln">
-            <label>{label}</label>
+            <label>
+                {label} {props.required && <span style={{ color: '#ef4444', fontWeight: 'bold' }}>*</span>}
+            </label>
             {helperText && <span className="helper-text-cln">{helperText}</span>}
         </div>
         <div className="input-with-icon-cln">
@@ -27,7 +29,9 @@ const InputField = memo(({ label, icon: Icon, helperText, ...props }) => (
 const TextAreaField = memo(({ label, icon: Icon, helperText, ...props }) => (
     <div className="form-group-admission">
         <div className="label-row-cln">
-            <label>{label}</label>
+            <label>
+                {label} {props.required && <span style={{ color: '#ef4444', fontWeight: 'bold' }}>*</span>}
+            </label>
             {helperText && <span className="helper-text-cln">{helperText}</span>}
         </div>
         <div className="input-with-icon-cln">
@@ -42,7 +46,7 @@ const TextAreaField = memo(({ label, icon: Icon, helperText, ...props }) => (
     </div>
 ));
 
-const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange }) => {
+const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange, required }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -65,7 +69,9 @@ const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange
     return (
         <div className="form-group-admission" ref={dropdownRef} style={{ zIndex: isOpen ? 1000 : 1 }}>
             <div className="label-row-cln">
-                <label>{label}</label>
+                <label>
+                    {label} {required && <span style={{ color: '#ef4444', fontWeight: 'bold' }}>*</span>}
+                </label>
             </div>
             <div className={`custom-dropdown-wrap ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
                 {Icon && <Icon size={18} className="field-icon-cln" />}
@@ -583,7 +589,7 @@ const StudentAdmission = () => {
                         <AnimatePresence mode="wait">
                             {step === 1 && (
                                 <motion.div key="s1" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Page 1: Student Details</h3>
+                                    <h3 className="step-heading">Student Details</h3>
                                     <div className="grid-flex">
                                         <InputField label="First Name" icon={User} name="firstName" value={formData.firstName} onChange={handleChange} required />
                                         <InputField label="Initial / Last Name" icon={User} name="lastName" value={formData.lastName} onChange={handleChange} required />
@@ -598,38 +604,38 @@ const StudentAdmission = () => {
                                         <InputField label="Student Mobile Number (Alternate)" icon={Phone} name="studentMobileAlt" value={formData.studentMobileAlt} onChange={handleChange} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Email" icon={Mail} type="email" name="email" value={formData.email} onChange={handleChange} required />
-                                        <CustomDropdown label="How you came to know Hope3?" name="knowledgeSource" value={formData.knowledgeSource} onChange={handleChange} options={['Facebook / Social media', 'Whatsapp Forward', 'School / Teacher', 'Friends / Well wishers', 'Other']} />
+                                        <InputField label="Email" icon={Mail} type="email" name="email" value={formData.email} onChange={handleChange} />
+                                        <CustomDropdown label="How you came to know Hope3?" name="knowledgeSource" value={formData.knowledgeSource} onChange={handleChange} options={['Facebook / Social media', 'Whatsapp Forward', 'School / Teacher', 'Friends / Well wishers', 'Other']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} />
-                                        <CustomDropdown label="District" name="district" value={formData.district} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                        <CustomDropdown label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} required />
+                                        <CustomDropdown label="District" name="district" value={formData.district} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Physically challenged?" name="physicallyChallenged" value={formData.physicallyChallenged} onChange={handleChange} options={['Yes', 'No']} />
-                                        <CustomDropdown label="Living with?" name="livingWith" value={formData.livingWith} onChange={handleChange} options={['Parents', 'Single parent', 'Orphanage Home', 'In Refugee Camp', 'Other']} />
+                                        <CustomDropdown label="Physically challenged?" name="physicallyChallenged" value={formData.physicallyChallenged} onChange={handleChange} options={['Yes', 'No']} required />
+                                        <CustomDropdown label="Living with?" name="livingWith" value={formData.livingWith} onChange={handleChange} options={['Parents', 'Single parent', 'Orphanage Home', 'In Refugee Camp', 'Other']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Home Region type" name="homeRegionType" value={formData.homeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
-                                        <CustomDropdown label="Course you want to study?" name="courseToStudy" value={formData.courseToStudy} onChange={handleChange} options={['B.E / B.Tech – Computer Science', 'B.E / B.Tech – Information Technology', 'B.E / B.Tech – Electronics', 'B.E / B.Tech – Electrical', 'B.Sc Computer Science', 'B.Sc Maths', 'B.A Political Science', 'B.A History', 'Medical', 'NEET', 'Others']} />
+                                        <CustomDropdown label="Home Region type" name="homeRegionType" value={formData.homeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
+                                        <CustomDropdown label="What course do you want to study?" name="courseToStudy" value={formData.courseToStudy} onChange={handleChange} options={['B.E / B.Tech – Computer Science', 'B.E / B.Tech – Information Technology', 'B.E / B.Tech – Electronics', 'B.E / B.Tech – Electrical', 'B.Sc Computer Science', 'B.Sc Maths', 'B.A Political Science', 'B.A History', 'Medical', 'NEET', 'Others']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Ambition (Choice 1)?" name="ambitionChoice1" value={formData.ambitionChoice1} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} />
-                                        <CustomDropdown label="Ambition (Choice 2)?" name="ambitionChoice2" value={formData.ambitionChoice2} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} />
+                                        <CustomDropdown label="Ambition (Choice 1)" name="ambitionChoice1" value={formData.ambitionChoice1} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} required />
+                                        <CustomDropdown label="Ambition (Choice 2)" name="ambitionChoice2" value={formData.ambitionChoice2} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} required />
                                     </div>
-                                    <CustomDropdown label="Are you a First Graduate?" name="isFirstGraduate" value={formData.isFirstGraduate} onChange={handleChange} options={['Yes', 'No']} />
+                                    <CustomDropdown label="Are you a First Graduate?" name="isFirstGraduate" value={formData.isFirstGraduate} onChange={handleChange} options={['Yes', 'No']} required />
                                 </motion.div>
                             )}
 
                             {step === 2 && (
                                 <motion.div key="s2" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Page 2: Relative's Information</h3>
+                                    <h3 className="step-heading">Relative's Information</h3>
                                     <div className="grid-flex">
                                         <InputField label="Name of Relative" name="relativeName" value={formData.relativeName} onChange={handleChange} required helperText="Father / Mother / Guardian" />
-                                        <CustomDropdown label="Relationship type" name="relationshipType" value={formData.relationshipType} onChange={handleChange} options={['Father', 'Mother', 'Guardian', 'Other']} />
+                                        <CustomDropdown label="Relationship type" name="relationshipType" value={formData.relationshipType} onChange={handleChange} options={['Father', 'Mother', 'Guardian', 'Other']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Occupation" name="relativeOccupation" value={formData.relativeOccupation} onChange={handleChange} required />
+                                        <InputField label="Occupation" name="relativeOccupation" value={formData.relativeOccupation} onChange={handleChange} />
                                         <InputField label="Mobile Number" name="relativeMobile" value={formData.relativeMobile} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
@@ -645,22 +651,22 @@ const StudentAdmission = () => {
 
                             {step === 3 && (
                                 <motion.div key="s3" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Page 3: 10th Education Details</h3>
+                                    <h3 className="step-heading">10th Education Details</h3>
                                     <div className="grid-flex">
                                         <InputField label="10th School Name" name="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} required />
-                                        <InputField label="10th School Location" name="tenthSchoolLocation" value={formData.tenthSchoolLocation} onChange={handleChange} />
+                                        <InputField label="10th School Location" name="tenthSchoolLocation" value={formData.tenthSchoolLocation} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="10th Registration number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="District where you studied 10th standard?" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                        <InputField label="10th Registration number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} required />
+                                        <CustomDropdown label="District where you studied 10th standard?" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="School Region type" name="tenthSchoolRegionType" value={formData.tenthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
-                                        <CustomDropdown label="10th standard school type" name="tenthSchoolType" value={formData.tenthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} />
+                                        <CustomDropdown label="School Region type" name="tenthSchoolRegionType" value={formData.tenthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
+                                        <CustomDropdown label="10th standard school type" name="tenthSchoolType" value={formData.tenthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Year passed 10th Standard" name="tenthYearPassed" value={formData.tenthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
-                                        <CustomDropdown label="Which course did you complete?" name="tenthCourseCompleted" value={formData.tenthCourseCompleted} onChange={handleChange} options={['Diploma', '11th', '12th']} />
+                                        <CustomDropdown label="Year passed 10th Standard" name="tenthYearPassed" value={formData.tenthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
+                                        <CustomDropdown label="Which course did you complete?" name="tenthCourseCompleted" value={formData.tenthCourseCompleted} onChange={handleChange} options={['Diploma', '11th', '12th']} required />
                                     </div>
 
                                     <div className="form-sub-container">
@@ -683,41 +689,41 @@ const StudentAdmission = () => {
 
                             {step === 4 && formData.tenthCourseCompleted === 'Diploma' && (
                                 <motion.div key="s4" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Page 4: Diploma Details</h3>
+                                    <h3 className="step-heading">Diploma Details</h3>
                                     <div className="grid-flex">
                                         <InputField label="College Name" name="diplomaCollegeName" value={formData.diplomaCollegeName} onChange={handleChange} required />
                                         <InputField label="College Location" name="diplomaCollegeLocation" value={formData.diplomaCollegeLocation} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
                                         <InputField label="Diploma Percentage" type="number" name="diplomaPercentage" value={formData.diplomaPercentage} onChange={handleChange} required helperText="Enter percentage (e.g., 85.5)" />
-                                        <CustomDropdown label="District where you studied Diploma?" name="diplomaDistrictStudied" value={formData.diplomaDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                        <CustomDropdown label="District where you studied Diploma?" name="diplomaDistrictStudied" value={formData.diplomaDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="College Region type" name="diplomaCollegeRegionType" value={formData.diplomaCollegeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
-                                        <CustomDropdown label="Course you studied?" name="diplomaCourseStudied" value={formData.diplomaCourseStudied} onChange={handleChange} options={['Computer Engineering', 'Electrical Engineering', 'Electronics & Communication Engineering', 'Electrical & Telecommunication Engineering', 'Information Technology', 'Electrical and Electronics Engineering', 'Computer Science and Engineering', 'Other']} />
+                                        <CustomDropdown label="College Region type" name="diplomaCollegeRegionType" value={formData.diplomaCollegeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
+                                        <CustomDropdown label="Course you studied?" name="diplomaCourseStudied" value={formData.diplomaCourseStudied} onChange={handleChange} options={['Computer Engineering', 'Electrical Engineering', 'Electronics & Communication Engineering', 'Electrical & Telecommunication Engineering', 'Information Technology', 'Electrical and Electronics Engineering', 'Computer Science and Engineering', 'Other']} required />
                                     </div>
-                                    <CustomDropdown label="Year passed College" name="diplomaYearPassed" value={formData.diplomaYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
+                                    <CustomDropdown label="Year passed College" name="diplomaYearPassed" value={formData.diplomaYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
                                 </motion.div>
                             )}
 
                             {step === 4 && (formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th') && (
                                 <motion.div key="s4-11th" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Page 4: 11th Education Details</h3>
+                                    <h3 className="step-heading">11th Education Details</h3>
                                     <div className="grid-flex">
                                         <InputField label="11th School Name" name="eleventhSchoolName" value={formData.eleventhSchoolName} onChange={handleChange} required />
                                         <InputField label="11th School Location" name="eleventhSchoolLocation" value={formData.eleventhSchoolLocation} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
                                         <InputField label="11th Registration Number" name="eleventhRegistrationNumber" value={formData.eleventhRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="District where you studied 11th standard?" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                        <CustomDropdown label="District where you studied 11th standard?" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="School Region type" name="eleventhSchoolRegionType" value={formData.eleventhSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
-                                        <CustomDropdown label="11th standard school type" name="eleventhSchoolType" value={formData.eleventhSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} />
+                                        <CustomDropdown label="School Region type" name="eleventhSchoolRegionType" value={formData.eleventhSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
+                                        <CustomDropdown label="11th standard school type" name="eleventhSchoolType" value={formData.eleventhSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Year passed 11th Standard" name="eleventhYearPassed" value={formData.eleventhYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
-                                        <CustomDropdown label="Select your subjects" name="eleventhSubjects" value={formData.eleventhSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} />
+                                        <CustomDropdown label="Year passed 11th Standard" name="eleventhYearPassed" value={formData.eleventhYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
+                                        <CustomDropdown label="Select your subjects" name="eleventhSubjects" value={formData.eleventhSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} required />
                                     </div>
 
 
@@ -764,22 +770,22 @@ const StudentAdmission = () => {
 
                             {step === 5 && formData.tenthCourseCompleted === '12th' && (
                                 <motion.div key="s5-12th" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Page 5: 12th Education Details</h3>
+                                    <h3 className="step-heading">12th Education Details</h3>
                                     <div className="grid-flex">
                                         <InputField label="12th School Name" name="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} required />
                                         <InputField label="12th School Location" name="twelfthSchoolLocation" value={formData.twelfthSchoolLocation} onChange={handleChange} required />
                                     </div>
                                     <div className="grid-flex">
                                         <InputField label="12th Registration Number" name="twelfthRegistrationNumber" value={formData.twelfthRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="District where you studied 12th standard?" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} />
+                                        <CustomDropdown label="District where you studied 12th standard?" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="School Region type" name="twelfthSchoolRegionType" value={formData.twelfthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} />
-                                        <CustomDropdown label="12th standard school type" name="twelfthSchoolType" value={formData.twelfthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} />
+                                        <CustomDropdown label="School Region type" name="twelfthSchoolRegionType" value={formData.twelfthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
+                                        <CustomDropdown label="12th standard school type" name="twelfthSchoolType" value={formData.twelfthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Year passed 12th Standard" name="twelfthYearPassed" value={formData.twelfthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} />
-                                        <CustomDropdown label="Select your subjects" name="twelfthSubjects" value={formData.twelfthSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} />
+                                        <CustomDropdown label="Year passed 12th Standard" name="twelfthYearPassed" value={formData.twelfthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
+                                        <CustomDropdown label="Select your subjects" name="twelfthSubjects" value={formData.twelfthSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} required />
                                     </div>
 
 
@@ -943,11 +949,15 @@ const localStyles = (
         .chevron-icon.rotated { transform: rotate(180deg); color: var(--primary); }
         .dropdown-options {
             position: absolute; top: calc(100% + 8px); left: 0; right: 0; background: #fff; border-radius: 16px; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); border: 1px solid #f1f5f9; z-index: 100; overflow: hidden; padding: 0.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12); border: 1px solid #f1f5f9; z-index: 100; overflow-y: auto; max-height: 300px; padding: 0.5rem;
         }
         .dropdown-opt { padding: 0.8rem 1.2rem; font-size: 0.95rem; font-weight: 600; color: #475569; transition: all 0.2s; border-radius: 10px; }
         .dropdown-opt:hover { background: #f1f5f9; color: var(--primary); }
         .dropdown-opt.selected { background: rgba(0, 209, 193, 0.08); color: var(--primary); }
+        .dropdown-options::-webkit-scrollbar { width: 6px; }
+        .dropdown-options::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .dropdown-options::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dropdown-options::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 
         .grid-flex { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
