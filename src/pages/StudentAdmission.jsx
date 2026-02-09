@@ -6,8 +6,8 @@ import logo from '../assets/hope logo.png';
 
 // --- Pure UI Components (Defined Outside to Prevent Focus Loss) ---
 
-const InputField = memo(({ label, icon: Icon, helperText, ...props }) => (
-    <div className="form-group-admission">
+const InputField = memo(({ label, icon: Icon, helperText, error, ...props }) => (
+    <div className={`form-group-admission ${error ? 'has-error' : ''}`}>
         <div className="label-row-cln">
             <label>
                 {label} {props.required && <span style={{ color: '#ef4444', fontWeight: 'bold' }}>*</span>}
@@ -18,16 +18,17 @@ const InputField = memo(({ label, icon: Icon, helperText, ...props }) => (
             {Icon && <Icon size={18} className="field-icon-cln" />}
             <input
                 {...props}
-                className={`enhanced-input ${Icon ? 'with-icon' : ''}`}
+                className={`enhanced-input ${Icon ? 'with-icon' : ''} ${error ? 'error-ring' : ''}`}
                 autoComplete="new-password"
                 placeholder={props.placeholder || `Enter ${label.toLowerCase()}...`}
             />
         </div>
+        {error && <motion.span initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="error-message-cln">{error}</motion.span>}
     </div>
 ));
 
-const TextAreaField = memo(({ label, icon: Icon, helperText, ...props }) => (
-    <div className="form-group-admission">
+const TextAreaField = memo(({ label, icon: Icon, helperText, error, ...props }) => (
+    <div className={`form-group-admission ${error ? 'has-error' : ''}`}>
         <div className="label-row-cln">
             <label>
                 {label} {props.required && <span style={{ color: '#ef4444', fontWeight: 'bold' }}>*</span>}
@@ -38,15 +39,16 @@ const TextAreaField = memo(({ label, icon: Icon, helperText, ...props }) => (
             {Icon && <Icon size={18} className="field-icon-cln" style={{ top: '20px', transform: 'none' }} />}
             <textarea
                 {...props}
-                className={`enhanced-input textarea-enhanced ${Icon ? 'with-icon' : ''}`}
+                className={`enhanced-input textarea-enhanced ${Icon ? 'with-icon' : ''} ${error ? 'error-ring' : ''}`}
                 rows="3"
                 placeholder={props.placeholder || `Provide ${label.toLowerCase()} details...`}
             />
         </div>
+        {error && <motion.span initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="error-message-cln">{error}</motion.span>}
     </div>
 ));
 
-const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange, required }) => {
+const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange, required, error }) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -61,22 +63,22 @@ const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange
     }, []);
 
     const handleSelect = (option) => {
-        const val = option === 'Select' ? '' : option;
+        const val = option === '-- Select --' ? '' : option;
         onChange({ target: { name, value: val } });
         setIsOpen(false);
     };
 
     return (
-        <div className="form-group-admission" ref={dropdownRef} style={{ zIndex: isOpen ? 1000 : 1 }}>
+        <div className={`form-group-admission ${error ? 'has-error' : ''}`} ref={dropdownRef} style={{ zIndex: isOpen ? 1000 : 1 }}>
             <div className="label-row-cln">
                 <label>
                     {label} {required && <span style={{ color: '#ef4444', fontWeight: 'bold' }}>*</span>}
                 </label>
             </div>
-            <div className={`custom-dropdown-wrap ${isOpen ? 'active' : ''}`} onClick={() => setIsOpen(!isOpen)}>
+            <div className={`custom-dropdown-wrap ${isOpen ? 'active' : ''} ${error ? 'error-ring' : ''}`} onClick={() => setIsOpen(!isOpen)}>
                 {Icon && <Icon size={18} className="field-icon-cln" />}
                 <div className={`dropdown-selected ${Icon ? 'with-icon' : ''} ${!value ? 'placeholder' : ''}`}>
-                    {value || 'Select an option'}
+                    {value || '-- Select --'}
                 </div>
                 <ChevronDown size={18} className={`chevron-icon ${isOpen ? 'rotated' : ''}`} />
 
@@ -88,6 +90,13 @@ const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange
                             exit={{ opacity: 0, y: -10 }}
                             className="dropdown-options"
                         >
+                            <div
+                                className={`dropdown-opt ${!value ? 'selected' : ''}`}
+                                style={{ color: '#94a3b8', fontStyle: 'italic', borderBottom: '1px dashed #e2e8f0' }}
+                                onClick={(e) => { e.stopPropagation(); handleSelect('-- Select --'); }}
+                            >
+                                -- Select --
+                            </div>
                             {options.map(opt => (
                                 <div
                                     key={opt}
@@ -101,6 +110,7 @@ const CustomDropdown = memo(({ label, options, icon: Icon, name, value, onChange
                     )}
                 </AnimatePresence>
             </div>
+            {error && <motion.span initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} className="error-message-cln">{error}</motion.span>}
         </div>
     );
 });
@@ -125,10 +135,14 @@ import {
 
 const StudentAdmission = () => {
     const navigate = useNavigate();
+
+    const ambitionOptions = ['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others'];
+
     const [step, setStep] = useState(1);
     const [submitted, setSubmitted] = useState(false);
     const [applicationId, setApplicationId] = useState('');
     const [copying, setCopying] = useState(false);
+    const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
         // Page 1: Student Details
         firstName: '',
@@ -243,6 +257,114 @@ const StudentAdmission = () => {
         twelfthTotalMarks: ''
     });
 
+    const fillDummyData = () => {
+        let dummyData = {};
+
+        if (step === 1) {
+            dummyData = {
+                firstName: 'Alex',
+                lastName: 'Johnson',
+                dob: '2005-05-15',
+                homeAddress: '123 Tech Lane, Innovation Hub',
+                pincode: '600001',
+                studentMobile: '9876543210',
+                studentMobileAlt: '9012345678',
+                email: 'alex.tech@example.com',
+                knowledgeSource: 'Friends / Well wishers',
+                gender: 'Male',
+                district: 'Chennai',
+                physicallyChallenged: 'No',
+                livingWith: 'Parents',
+                homeRegionType: 'City',
+                courseToStudy: 'B.E / B.Tech – Computer Science',
+                ambitionChoice1: 'Engineer',
+                ambitionChoice2: 'Research',
+                isFirstGraduate: 'Yes'
+            };
+        } else if (step === 2) {
+            dummyData = {
+                relativeName: 'Robert Johnson',
+                relationshipType: 'Father',
+                relativeOccupation: 'Engineer',
+                relativeMobile: '9123456780',
+                relativeEmail: 'robert@example.com',
+                familyMembersCount: '4',
+                familyIncomeMonthly: '50000',
+                relativeEducation: 'B.Tech'
+            };
+        } else if (step === 3) {
+            dummyData = {
+                tenthSchoolName: 'Global High School',
+                tenthSchoolLocation: 'Chennai Central',
+                tenthRegistrationNumber: '10TH89234',
+                tenthDistrictStudied: 'Chennai',
+                tenthSchoolRegionType: 'City',
+                tenthSchoolType: 'Private School',
+                tenthYearPassed: '2021',
+                tenthCourseCompleted: '12th',
+                tenthSubject1Marks: '95',
+                tenthSubject2Marks: '92',
+                tenthSubject3Marks: '98',
+                tenthSubject4Marks: '94',
+                tenthSubject5Marks: '96',
+                tenthTotalMarks: '475'
+            };
+        } else if (step === 4) {
+            if (formData.tenthCourseCompleted === 'Diploma') {
+                dummyData = {
+                    diplomaCollegeName: 'Tech Poly',
+                    diplomaCollegeLocation: 'Chennai',
+                    diplomaPercentage: '88',
+                    diplomaDistrictStudied: 'Chennai',
+                    diplomaCollegeRegionType: 'City',
+                    diplomaCourseStudied: 'Computer Engineering',
+                    diplomaYearPassed: '2024'
+                };
+            } else {
+                dummyData = {
+                    eleventhSchoolName: 'Global Higher Secondary',
+                    eleventhSchoolLocation: 'Chennai Central',
+                    eleventhRegistrationNumber: '11TH99234',
+                    eleventhDistrictStudied: 'Chennai',
+                    eleventhSchoolRegionType: 'City',
+                    eleventhSchoolType: 'Private School',
+                    eleventhYearPassed: '2022',
+                    eleventhSubjects: 'Mathematics / Physics / Chemistry / Statistics',
+                    eleventhEngineeringCutoff: '198',
+                    eleventhSubject1Marks: '94',
+                    eleventhSubject2Marks: '91',
+                    eleventhMathematicsMarks: '99',
+                    eleventhPhysicsMarks: '97',
+                    eleventhChemistryMarks: '98',
+                    eleventhStatisticsMarks: '96',
+                    eleventhTotalMarks: '575'
+                };
+            }
+        } else if (step === 5 && formData.tenthCourseCompleted === '12th') {
+            dummyData = {
+                twelfthSchoolName: 'Global Higher Secondary',
+                twelfthSchoolLocation: 'Chennai Central',
+                twelfthRegistrationNumber: '12TH10234',
+                twelfthDistrictStudied: 'Chennai',
+                twelfthSchoolRegionType: 'City',
+                twelfthSchoolType: 'Private School',
+                twelfthYearPassed: '2023',
+                twelfthSubjects: 'Mathematics / Physics / Chemistry / Statistics',
+                twelfthEngineeringCutoff: '199',
+                twelfthSubject1Marks: '96',
+                twelfthSubject2Marks: '93',
+                twelfthMathematicsMarks: '100',
+                twelfthPhysicsMarks: '98',
+                twelfthChemistryMarks: '99',
+                twelfthStatisticsMarks: '97',
+                twelfthTotalMarks: '583'
+            };
+        }
+
+        setFormData(prev => ({ ...prev, ...dummyData }));
+        setErrors({});
+    };
+
 
 
     const triggerCelebration = () => {
@@ -286,12 +408,163 @@ const StudentAdmission = () => {
     };
 
     const handleChange = (e) => {
-        const { name, value, type, files } = e.target;
+        let { name, value, type, files } = e.target;
+
+        // Restrict Pincode and Mobile to numbers only
+        if (['pincode', 'studentMobile', 'studentMobileAlt', 'relativeMobile', 'tenthTotalMarks', 'tenthRegistrationNumber'].includes(name)) {
+            value = value.replace(/\D/g, '');
+        }
+
         if (type === 'file') {
             setFormData(prev => ({ ...prev, [name]: files[0] }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+
+        // Clear error when user types
+        if (errors[name]) {
+            setErrors(prev => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
+        }
+    };
+
+    const validateStep = (currentStep) => {
+        const newErrors = {};
+
+        // Helper: Validate Required
+        const checkRequired = (fields) => {
+            fields.forEach(f => {
+                if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) {
+                    newErrors[f] = 'This field is required';
+                }
+            });
+        };
+
+        // Helper: Validate Email
+        const checkEmail = (f) => {
+            if (formData[f] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData[f])) {
+                newErrors[f] = 'Invalid email format';
+            }
+        };
+
+        // Helper: Validate Mobile (10 digits)
+        const checkMobile = (fields) => {
+            fields.forEach(f => {
+                if (formData[f] && !/^\d{10}$/.test(formData[f])) {
+                    newErrors[f] = 'Mobile number must be 10 digits';
+                }
+            });
+        };
+
+        // Helper: Validate Pincode (6 digits)
+        const checkPincode = (f) => {
+            if (formData[f] && !/^\d{6}$/.test(formData[f])) {
+                newErrors[f] = 'Pincode must be 6 digits';
+            }
+        };
+
+        // Helper: Validate Marks (0-100)
+        const checkMarks = (fields) => {
+            fields.forEach(f => {
+                if (formData[f] !== '' && (formData[f] < 0 || formData[f] > 100)) {
+                    newErrors[f] = 'Marks must be 0-100';
+                }
+            });
+        };
+
+        if (currentStep === 1) {
+            checkRequired(['firstName', 'lastName', 'dob', 'homeAddress', 'pincode', 'studentMobile', 'gender', 'district', 'physicallyChallenged', 'livingWith', 'homeRegionType', 'courseToStudy', 'ambitionChoice1', 'ambitionChoice2', 'isFirstGraduate', 'knowledgeSource']);
+            checkEmail('email');
+            checkMobile(['studentMobile', 'studentMobileAlt']);
+            checkPincode('pincode');
+
+            if (formData.ambitionChoice1 && formData.ambitionChoice1 === formData.ambitionChoice2) {
+                newErrors.ambitionChoice2 = 'Choices 1 and 2 must be different';
+            }
+        }
+
+        if (currentStep === 2) {
+            checkRequired(['relativeName', 'relationshipType', 'relativeMobile', 'familyMembersCount', 'familyIncomeMonthly']);
+            checkEmail('relativeEmail');
+            checkMobile(['relativeMobile']);
+        }
+
+        if (currentStep === 3) {
+            checkRequired(['tenthSchoolName', 'tenthSchoolLocation', 'tenthRegistrationNumber', 'tenthDistrictStudied', 'tenthSchoolRegionType', 'tenthSchoolType', 'tenthYearPassed', 'tenthCourseCompleted', 'tenthSubject1Marks', 'tenthSubject2Marks', 'tenthSubject3Marks', 'tenthSubject4Marks', 'tenthSubject5Marks', 'tenthTotalMarks']);
+            checkMarks(['tenthSubject1Marks', 'tenthSubject2Marks', 'tenthSubject3Marks', 'tenthSubject4Marks', 'tenthSubject5Marks']);
+
+            // Logic: Total check
+            const sum = [1, 2, 3, 4, 5].reduce((acc, i) => acc + (Number(formData[`tenthSubject${i}Marks`]) || 0), 0);
+            if (formData.tenthTotalMarks && Number(formData.tenthTotalMarks) !== sum) {
+                newErrors.tenthTotalMarks = `Total must be ${sum}`;
+            }
+        }
+
+        if (currentStep === 4 && formData.tenthCourseCompleted === 'Diploma') {
+            checkRequired(['diplomaCollegeName', 'diplomaCollegeLocation', 'diplomaPercentage', 'diplomaDistrictStudied', 'diplomaCollegeRegionType', 'diplomaCourseStudied', 'diplomaYearPassed']);
+            if (formData.diplomaPercentage && (formData.diplomaPercentage < 0 || formData.diplomaPercentage > 100)) {
+                newErrors.diplomaPercentage = 'Percentage must be 0-100';
+            }
+            if (formData.tenthYearPassed && formData.diplomaYearPassed && Number(formData.diplomaYearPassed) <= Number(formData.tenthYearPassed)) {
+                newErrors.diplomaYearPassed = 'Must be after 10th';
+            }
+        }
+
+        if (currentStep === 4 && (formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th')) {
+            checkRequired(['eleventhSchoolName', 'eleventhSchoolLocation', 'eleventhDistrictStudied', 'eleventhSchoolRegionType', 'eleventhSchoolType', 'eleventhYearPassed', 'eleventhSubjects', 'eleventhSubject1Marks', 'eleventhSubject2Marks']);
+            checkMarks(['eleventhSubject1Marks', 'eleventhSubject2Marks']);
+
+            if (formData.tenthYearPassed && formData.eleventhYearPassed && Number(formData.eleventhYearPassed) <= Number(formData.tenthYearPassed)) {
+                newErrors.eleventhYearPassed = 'Must be after 10th';
+            }
+
+            if (formData.eleventhSubjects) {
+                const majors = getMajorSubjectList(formData.eleventhSubjects);
+                majors.forEach(m => {
+                    const key = getSubjectKey('eleventh', m);
+                    if (!formData[key]) newErrors[key] = 'Required';
+                    else if (formData[key] < 0 || formData[key] > 100) newErrors[key] = '0-100';
+                });
+
+                // Total Check for 11th: 2 languages + 4 majors
+                const sum = (Number(formData.eleventhSubject1Marks) || 0) + (Number(formData.eleventhSubject2Marks) || 0) +
+                    majors.reduce((acc, m) => acc + (Number(formData[getSubjectKey('eleventh', m)]) || 0), 0);
+
+                if (!formData.eleventhTotalMarks) newErrors.eleventhTotalMarks = 'Required';
+                else if (Number(formData.eleventhTotalMarks) !== sum) newErrors.eleventhTotalMarks = `Total must be ${sum}`;
+            }
+        }
+
+        if (currentStep === 5 && formData.tenthCourseCompleted === '12th') {
+            checkRequired(['twelfthSchoolName', 'twelfthSchoolLocation', 'twelfthDistrictStudied', 'twelfthSchoolRegionType', 'twelfthSchoolType', 'twelfthYearPassed', 'twelfthSubjects', 'twelfthSubject1Marks', 'twelfthSubject2Marks']);
+            checkMarks(['twelfthSubject1Marks', 'twelfthSubject2Marks']);
+
+            if (formData.eleventhYearPassed && formData.twelfthYearPassed && Number(formData.twelfthYearPassed) <= Number(formData.eleventhYearPassed)) {
+                newErrors.twelfthYearPassed = 'Must be after 11th';
+            }
+
+            if (formData.twelfthSubjects) {
+                const majors = getMajorSubjectList(formData.twelfthSubjects);
+                majors.forEach(m => {
+                    const key = getSubjectKey('twelfth', m);
+                    if (!formData[key]) newErrors[key] = 'Required';
+                    else if (formData[key] < 0 || formData[key] > 100) newErrors[key] = '0-100';
+                });
+
+                // Total Check for 12th: 2 languages + 4 majors
+                const sum = (Number(formData.twelfthSubject1Marks) || 0) + (Number(formData.twelfthSubject2Marks) || 0) +
+                    majors.reduce((acc, m) => acc + (Number(formData[getSubjectKey('twelfth', m)]) || 0), 0);
+
+                if (!formData.twelfthTotalMarks) newErrors.twelfthTotalMarks = 'Required';
+                else if (Number(formData.twelfthTotalMarks) !== sum) newErrors.twelfthTotalMarks = `Total must be ${sum}`;
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     // Calculate total steps based on course completed
@@ -299,14 +572,24 @@ const StudentAdmission = () => {
         formData.tenthCourseCompleted === '11th' ? 5 :
             formData.tenthCourseCompleted === '12th' ? 6 : 3;
 
-    const handleNext = () => setStep(prev => prev + 1);
-    const handlePrev = () => setStep(prev => prev - 1);
+    const handleNext = () => {
+        if (validateStep(step)) {
+            setStep(prev => prev + 1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    };
+    const handlePrev = () => {
+        setStep(prev => prev - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const id = `HOPE3-2026-${Math.floor(Math.random() * 900) + 100}`;
-        setApplicationId(id);
-        setSubmitted(true);
+        if (validateStep(step)) {
+            const id = `HOPE3-2026-${Math.floor(Math.random() * 900) + 100}`;
+            setApplicationId(id);
+            setSubmitted(true);
+        }
     };
 
     if (submitted) {
@@ -566,9 +849,22 @@ const StudentAdmission = () => {
             <div className="app-container central-form-view">
                 <div className="admission-content-width">
                     <div className="admission-nav-top">
-                        <div className="back-link-cln" onClick={() => navigate('/')}><ChevronLeft size={20} /><span>Back to Site</span></div>
-                        <div className="logo-brand-cln">
-                            <img src={logo} alt="Logo" className="logo-cln" /><span className="brand-name-cln">HOPE3 Academy</span>
+                        <div className="back-link-cln" onClick={() => navigate('/')}>
+                            <ChevronLeft size={18} /> Back to Home
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                            <button
+                                type="button"
+                                onClick={fillDummyData}
+                                className="dev-fill-btn"
+                                title="Fill form with dummy data"
+                            >
+                                <Users size={16} /> <span>Dev: Fill Data</span>
+                            </button>
+                            <div className="logo-brand-cln">
+                                <img src={logo} alt="Hope3 Logo" className="logo-cln" />
+                                <span className="brand-name-cln">HOPE3 Academy</span>
+                            </div>
                         </div>
                     </div>
                     <div className="admission-intro">
@@ -591,39 +887,39 @@ const StudentAdmission = () => {
                                 <motion.div key="s1" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
                                     <h3 className="step-heading">Student Details</h3>
                                     <div className="grid-flex">
-                                        <InputField label="First Name" icon={User} name="firstName" value={formData.firstName} onChange={handleChange} required />
-                                        <InputField label="Initial / Last Name" icon={User} name="lastName" value={formData.lastName} onChange={handleChange} required />
+                                        <InputField label="First Name" icon={User} name="firstName" value={formData.firstName} onChange={handleChange} required error={errors.firstName} />
+                                        <InputField label="Initial / Last Name" icon={User} name="lastName" value={formData.lastName} onChange={handleChange} required error={errors.lastName} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Date-of-Birth" icon={Calendar} type="date" name="dob" value={formData.dob} onChange={handleChange} required />
-                                        <InputField label="Pincode" icon={MapPin} name="pincode" value={formData.pincode} onChange={handleChange} required />
+                                        <InputField label="Date-of-Birth" icon={Calendar} type="date" name="dob" value={formData.dob} onChange={handleChange} required error={errors.dob} />
+                                        <InputField label="Pincode" icon={MapPin} name="pincode" value={formData.pincode} onChange={handleChange} required error={errors.pincode} maxLength={6} />
                                     </div>
-                                    <TextAreaField label="Home Address" icon={Home} name="homeAddress" value={formData.homeAddress} onChange={handleChange} required />
+                                    <TextAreaField label="Home Address" icon={Home} name="homeAddress" value={formData.homeAddress} onChange={handleChange} required error={errors.homeAddress} />
                                     <div className="grid-flex">
-                                        <InputField label="Student Mobile Number" icon={Phone} name="studentMobile" value={formData.studentMobile} onChange={handleChange} required />
-                                        <InputField label="Student Mobile Number (Alternate)" icon={Phone} name="studentMobileAlt" value={formData.studentMobileAlt} onChange={handleChange} />
-                                    </div>
-                                    <div className="grid-flex">
-                                        <InputField label="Email" icon={Mail} type="email" name="email" value={formData.email} onChange={handleChange} />
-                                        <CustomDropdown label="How you came to know Hope3?" name="knowledgeSource" value={formData.knowledgeSource} onChange={handleChange} options={['Facebook / Social media', 'Whatsapp Forward', 'School / Teacher', 'Friends / Well wishers', 'Other']} required />
+                                        <InputField label="Student Mobile Number" icon={Phone} name="studentMobile" value={formData.studentMobile} onChange={handleChange} required error={errors.studentMobile} maxLength={10} />
+                                        <InputField label="Student Mobile Number (Alternate)" icon={Phone} name="studentMobileAlt" value={formData.studentMobileAlt} onChange={handleChange} error={errors.studentMobileAlt} maxLength={10} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} required />
-                                        <CustomDropdown label="District" name="district" value={formData.district} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <InputField label="Email" icon={Mail} type="email" name="email" value={formData.email} onChange={handleChange} error={errors.email} />
+                                        <CustomDropdown label="How you came to know Hope3?" name="knowledgeSource" value={formData.knowledgeSource} onChange={handleChange} options={['Facebook / Social media', 'Whatsapp Forward', 'School / Teacher', 'Friends / Well wishers', 'Other']} required error={errors.knowledgeSource} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Physically challenged?" name="physicallyChallenged" value={formData.physicallyChallenged} onChange={handleChange} options={['Yes', 'No']} required />
-                                        <CustomDropdown label="Living with?" name="livingWith" value={formData.livingWith} onChange={handleChange} options={['Parents', 'Single parent', 'Orphanage Home', 'In Refugee Camp', 'Other']} required />
+                                        <CustomDropdown label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} required error={errors.gender} />
+                                        <CustomDropdown label="District" name="district" value={formData.district} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required error={errors.district} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Home Region type" name="homeRegionType" value={formData.homeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
-                                        <CustomDropdown label="What course do you want to study?" name="courseToStudy" value={formData.courseToStudy} onChange={handleChange} options={['B.E / B.Tech – Computer Science', 'B.E / B.Tech – Information Technology', 'B.E / B.Tech – Electronics', 'B.E / B.Tech – Electrical', 'B.Sc Computer Science', 'B.Sc Maths', 'B.A Political Science', 'B.A History', 'Medical', 'NEET', 'Others']} required />
+                                        <CustomDropdown label="Physically challenged?" name="physicallyChallenged" value={formData.physicallyChallenged} onChange={handleChange} options={['Yes', 'No']} required error={errors.physicallyChallenged} />
+                                        <CustomDropdown label="Living with?" name="livingWith" value={formData.livingWith} onChange={handleChange} options={['Parents', 'Single parent', 'Orphanage Home', 'In Refugee Camp', 'Other']} required error={errors.livingWith} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Ambition (Choice 1)" name="ambitionChoice1" value={formData.ambitionChoice1} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} required />
-                                        <CustomDropdown label="Ambition (Choice 2)" name="ambitionChoice2" value={formData.ambitionChoice2} onChange={handleChange} options={['Doctor', 'Engineer', 'Designer', 'Film Making', 'Agriculture', 'Work in Banking Sector', 'Business', 'CA', 'Civil Service', 'Research', 'Teacher', 'Others']} required />
+                                        <CustomDropdown label="Home Region type" name="homeRegionType" value={formData.homeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required error={errors.homeRegionType} />
+                                        <CustomDropdown label="What course do you want to study?" name="courseToStudy" value={formData.courseToStudy} onChange={handleChange} options={['B.E / B.Tech – Computer Science', 'B.E / B.Tech – Information Technology', 'B.E / B.Tech – Electronics', 'B.E / B.Tech – Electrical', 'B.Sc Computer Science', 'B.Sc Maths', 'B.A Political Science', 'B.A History', 'Medical', 'NEET', 'Others']} required error={errors.courseToStudy} />
                                     </div>
-                                    <CustomDropdown label="Are you a First Graduate?" name="isFirstGraduate" value={formData.isFirstGraduate} onChange={handleChange} options={['Yes', 'No']} required />
+                                    <div className="grid-flex">
+                                        <CustomDropdown label="Ambition (Choice 1)" name="ambitionChoice1" value={formData.ambitionChoice1} onChange={handleChange} options={ambitionOptions.filter(opt => opt !== formData.ambitionChoice2)} required error={errors.ambitionChoice1} />
+                                        <CustomDropdown label="Ambition (Choice 2)" name="ambitionChoice2" value={formData.ambitionChoice2} onChange={handleChange} options={ambitionOptions.filter(opt => opt !== formData.ambitionChoice1)} required error={errors.ambitionChoice2} />
+                                    </div>
+                                    <CustomDropdown label="Are you a First Graduate?" name="isFirstGraduate" value={formData.isFirstGraduate} onChange={handleChange} options={['Yes', 'No']} required error={errors.isFirstGraduate} />
                                 </motion.div>
                             )}
 
@@ -631,20 +927,20 @@ const StudentAdmission = () => {
                                 <motion.div key="s2" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
                                     <h3 className="step-heading">Relative's Information</h3>
                                     <div className="grid-flex">
-                                        <InputField label="Name of Relative" name="relativeName" value={formData.relativeName} onChange={handleChange} required helperText="Father / Mother / Guardian" />
-                                        <CustomDropdown label="Relationship type" name="relationshipType" value={formData.relationshipType} onChange={handleChange} options={['Father', 'Mother', 'Guardian', 'Other']} required />
+                                        <InputField label="Name of Relative" name="relativeName" value={formData.relativeName} onChange={handleChange} required helperText="Father / Mother / Guardian" error={errors.relativeName} />
+                                        <CustomDropdown label="Relationship type" name="relationshipType" value={formData.relationshipType} onChange={handleChange} options={['Father', 'Mother', 'Guardian', 'Other']} required error={errors.relationshipType} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Occupation" name="relativeOccupation" value={formData.relativeOccupation} onChange={handleChange} />
-                                        <InputField label="Mobile Number" name="relativeMobile" value={formData.relativeMobile} onChange={handleChange} required />
+                                        <InputField label="Occupation" name="relativeOccupation" value={formData.relativeOccupation} onChange={handleChange} error={errors.relativeOccupation} />
+                                        <InputField label="Mobile Number" name="relativeMobile" value={formData.relativeMobile} onChange={handleChange} required error={errors.relativeMobile} maxLength={10} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Email id" name="relativeEmail" value={formData.relativeEmail} onChange={handleChange} />
-                                        <CustomDropdown label="Educational level" name="relativeEducation" value={formData.relativeEducation} onChange={handleChange} options={['Below 10th', '10th Standard', '12th Standard', 'Bachelor degree', 'Master degree']} />
+                                        <InputField label="Email id" name="relativeEmail" value={formData.relativeEmail} onChange={handleChange} error={errors.relativeEmail} />
+                                        <CustomDropdown label="Educational level" name="relativeEducation" value={formData.relativeEducation} onChange={handleChange} options={['Below 10th', '10th Standard', '12th Standard', 'Bachelor degree', 'Master degree']} error={errors.relativeEducation} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="Total members in family" type="number" name="familyMembersCount" value={formData.familyMembersCount} onChange={handleChange} required />
-                                        <InputField label="Total Family Income (Monthly)" type="number" name="familyIncomeMonthly" value={formData.familyIncomeMonthly} onChange={handleChange} required />
+                                        <InputField label="Total members in family" type="number" name="familyMembersCount" value={formData.familyMembersCount} onChange={handleChange} required error={errors.familyMembersCount} />
+                                        <InputField label="Total Family Income (Monthly)" type="number" name="familyIncomeMonthly" value={formData.familyIncomeMonthly} onChange={handleChange} required error={errors.familyIncomeMonthly} />
                                     </div>
                                 </motion.div>
                             )}
@@ -653,35 +949,35 @@ const StudentAdmission = () => {
                                 <motion.div key="s3" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
                                     <h3 className="step-heading">10th Education Details</h3>
                                     <div className="grid-flex">
-                                        <InputField label="10th School Name" name="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} required />
-                                        <InputField label="10th School Location" name="tenthSchoolLocation" value={formData.tenthSchoolLocation} onChange={handleChange} required />
+                                        <InputField label="10th School Name" name="tenthSchoolName" value={formData.tenthSchoolName} onChange={handleChange} required error={errors.tenthSchoolName} />
+                                        <InputField label="10th School Location" name="tenthSchoolLocation" value={formData.tenthSchoolLocation} onChange={handleChange} required error={errors.tenthSchoolLocation} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="10th Registration Number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} required />
-                                        <CustomDropdown label="10th District Studied" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <InputField label="10th Registration Number" name="tenthRegistrationNumber" value={formData.tenthRegistrationNumber} onChange={handleChange} required error={errors.tenthRegistrationNumber} />
+                                        <CustomDropdown label="10th District Studied" name="tenthDistrictStudied" value={formData.tenthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required error={errors.tenthDistrictStudied} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="School Region type" name="tenthSchoolRegionType" value={formData.tenthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
-                                        <CustomDropdown label="10th standard school type" name="tenthSchoolType" value={formData.tenthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required />
+                                        <CustomDropdown label="School Region type" name="tenthSchoolRegionType" value={formData.tenthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required error={errors.tenthSchoolRegionType} />
+                                        <CustomDropdown label="10th standard school type" name="tenthSchoolType" value={formData.tenthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required error={errors.tenthSchoolType} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Year passed 10th Standard" name="tenthYearPassed" value={formData.tenthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
-                                        <CustomDropdown label="Which course did you complete?" name="tenthCourseCompleted" value={formData.tenthCourseCompleted} onChange={handleChange} options={['Diploma', '11th', '12th']} required />
+                                        <CustomDropdown label="Year passed 10th Standard" name="tenthYearPassed" value={formData.tenthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required error={errors.tenthYearPassed} />
+                                        <CustomDropdown label="Which course did you complete?" name="tenthCourseCompleted" value={formData.tenthCourseCompleted} onChange={handleChange} options={['Diploma', '11th', '12th']} required error={errors.tenthCourseCompleted} />
                                     </div>
 
                                     <div className="form-sub-container">
                                         <h4 className="label-sub">10th Standard Subject Marks</h4>
                                         <div className="grid-flex">
-                                            <InputField label="Subject 1: Language marks" type="number" name="tenthSubject1Marks" value={formData.tenthSubject1Marks} onChange={handleChange} required />
-                                            <InputField label="Subject 2: English language marks" type="number" name="tenthSubject2Marks" value={formData.tenthSubject2Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 1: Language marks" type="number" name="tenthSubject1Marks" value={formData.tenthSubject1Marks} onChange={handleChange} required error={errors.tenthSubject1Marks} />
+                                            <InputField label="Subject 2: English language marks" type="number" name="tenthSubject2Marks" value={formData.tenthSubject2Marks} onChange={handleChange} required error={errors.tenthSubject2Marks} />
                                         </div>
                                         <div className="grid-flex">
-                                            <InputField label="Subject 3: Mathematics marks" type="number" name="tenthSubject3Marks" value={formData.tenthSubject3Marks} onChange={handleChange} required />
-                                            <InputField label="Subject 4: Science marks" type="number" name="tenthSubject4Marks" value={formData.tenthSubject4Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 3: Mathematics marks" type="number" name="tenthSubject3Marks" value={formData.tenthSubject3Marks} onChange={handleChange} required error={errors.tenthSubject3Marks} />
+                                            <InputField label="Subject 4: Science marks" type="number" name="tenthSubject4Marks" value={formData.tenthSubject4Marks} onChange={handleChange} required error={errors.tenthSubject4Marks} />
                                         </div>
                                         <div className="grid-flex">
-                                            <InputField label="Subject 5: Social Science marks" type="number" name="tenthSubject5Marks" value={formData.tenthSubject5Marks} onChange={handleChange} required />
-                                            <InputField label="10th Total Marks" type="number" name="tenthTotalMarks" value={formData.tenthTotalMarks} onChange={handleChange} required />
+                                            <InputField label="Subject 5: Social Science marks" type="number" name="tenthSubject5Marks" value={formData.tenthSubject5Marks} onChange={handleChange} required error={errors.tenthSubject5Marks} />
+                                            <InputField label="10th Total Marks" type="number" name="tenthTotalMarks" value={formData.tenthTotalMarks} onChange={handleChange} required error={errors.tenthTotalMarks} />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -702,7 +998,7 @@ const StudentAdmission = () => {
                                         <CustomDropdown label="College Region type" name="diplomaCollegeRegionType" value={formData.diplomaCollegeRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
                                         <CustomDropdown label="Course you studied?" name="diplomaCourseStudied" value={formData.diplomaCourseStudied} onChange={handleChange} options={['Computer Engineering', 'Electrical Engineering', 'Electronics & Communication Engineering', 'Electrical & Telecommunication Engineering', 'Information Technology', 'Electrical and Electronics Engineering', 'Computer Science and Engineering', 'Other']} required />
                                     </div>
-                                    <CustomDropdown label="Year passed College" name="diplomaYearPassed" value={formData.diplomaYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
+                                    <CustomDropdown label="Year passed College" name="diplomaYearPassed" value={formData.diplomaYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required error={errors.diplomaYearPassed} />
                                 </motion.div>
                             )}
 
@@ -710,20 +1006,20 @@ const StudentAdmission = () => {
                                 <motion.div key="s4-11th" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
                                     <h3 className="step-heading">11th Education Details</h3>
                                     <div className="grid-flex">
-                                        <InputField label="11th School Name" name="eleventhSchoolName" value={formData.eleventhSchoolName} onChange={handleChange} required />
-                                        <InputField label="11th School Location" name="eleventhSchoolLocation" value={formData.eleventhSchoolLocation} onChange={handleChange} required />
+                                        <InputField label="11th School Name" name="eleventhSchoolName" value={formData.eleventhSchoolName} onChange={handleChange} required error={errors.eleventhSchoolName} />
+                                        <InputField label="11th School Location" name="eleventhSchoolLocation" value={formData.eleventhSchoolLocation} onChange={handleChange} required error={errors.eleventhSchoolLocation} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="11th Registration Number" name="eleventhRegistrationNumber" value={formData.eleventhRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="11th District Studied" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <InputField label="11th Registration Number" name="eleventhRegistrationNumber" value={formData.eleventhRegistrationNumber} onChange={handleChange} error={errors.eleventhRegistrationNumber} />
+                                        <CustomDropdown label="11th District Studied" name="eleventhDistrictStudied" value={formData.eleventhDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required error={errors.eleventhDistrictStudied} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="School Region type" name="eleventhSchoolRegionType" value={formData.eleventhSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
-                                        <CustomDropdown label="11th standard school type" name="eleventhSchoolType" value={formData.eleventhSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required />
+                                        <CustomDropdown label="School Region type" name="eleventhSchoolRegionType" value={formData.eleventhSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required error={errors.eleventhSchoolRegionType} />
+                                        <CustomDropdown label="11th standard school type" name="eleventhSchoolType" value={formData.eleventhSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required error={errors.eleventhSchoolType} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Year passed 11th Standard" name="eleventhYearPassed" value={formData.eleventhYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
-                                        <CustomDropdown label="Select your subjects" name="eleventhSubjects" value={formData.eleventhSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} required />
+                                        <CustomDropdown label="Year passed 11th Standard" name="eleventhYearPassed" value={formData.eleventhYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required error={errors.eleventhYearPassed} />
+                                        <CustomDropdown label="Select your subjects" name="eleventhSubjects" value={formData.eleventhSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} required error={errors.eleventhSubjects} />
                                     </div>
 
 
@@ -740,8 +1036,8 @@ const StudentAdmission = () => {
                                     <div className="form-sub-container">
                                         <h4 className="label-sub">11th Standard Subject Marks</h4>
                                         <div className="grid-flex">
-                                            <InputField label="Subject 1: Tamil / Language marks" type="number" name="eleventhSubject1Marks" value={formData.eleventhSubject1Marks} onChange={handleChange} required />
-                                            <InputField label="Subject 2: English marks" type="number" name="eleventhSubject2Marks" value={formData.eleventhSubject2Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 1: Tamil / Language marks" type="number" name="eleventhSubject1Marks" value={formData.eleventhSubject1Marks} onChange={handleChange} required error={errors.eleventhSubject1Marks} />
+                                            <InputField label="Subject 2: English marks" type="number" name="eleventhSubject2Marks" value={formData.eleventhSubject2Marks} onChange={handleChange} required error={errors.eleventhSubject2Marks} />
                                         </div>
 
                                         {/* Dynamic Major Subject Marks - Shows inside the same container */}
@@ -758,9 +1054,10 @@ const StudentAdmission = () => {
                                                             value={formData[getSubjectKey('eleventh', subject)]}
                                                             onChange={handleChange}
                                                             required
+                                                            error={errors[getSubjectKey('eleventh', subject)]}
                                                         />
                                                     ))}
-                                                    <InputField label="11th Total Marks" type="number" name="eleventhTotalMarks" value={formData.eleventhTotalMarks} onChange={handleChange} required />
+                                                    <InputField label="11th Total Marks" type="number" name="eleventhTotalMarks" value={formData.eleventhTotalMarks} onChange={handleChange} required error={errors.eleventhTotalMarks} />
                                                 </div>
                                             </div>
                                         )}
@@ -772,20 +1069,20 @@ const StudentAdmission = () => {
                                 <motion.div key="s5-12th" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
                                     <h3 className="step-heading">12th Education Details</h3>
                                     <div className="grid-flex">
-                                        <InputField label="12th School Name" name="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} required />
-                                        <InputField label="12th School Location" name="twelfthSchoolLocation" value={formData.twelfthSchoolLocation} onChange={handleChange} required />
+                                        <InputField label="12th School Name" name="twelfthSchoolName" value={formData.twelfthSchoolName} onChange={handleChange} required error={errors.twelfthSchoolName} />
+                                        <InputField label="12th School Location" name="twelfthSchoolLocation" value={formData.twelfthSchoolLocation} onChange={handleChange} required error={errors.twelfthSchoolLocation} />
                                     </div>
                                     <div className="grid-flex">
-                                        <InputField label="12th Registration Number" name="twelfthRegistrationNumber" value={formData.twelfthRegistrationNumber} onChange={handleChange} />
-                                        <CustomDropdown label="12th District Studied" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required />
+                                        <InputField label="12th Registration Number" name="twelfthRegistrationNumber" value={formData.twelfthRegistrationNumber} onChange={handleChange} error={errors.twelfthRegistrationNumber} />
+                                        <CustomDropdown label="12th District Studied" name="twelfthDistrictStudied" value={formData.twelfthDistrictStudied} onChange={handleChange} options={['Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri', 'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanniyakumari', 'Karur', 'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris', 'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivagangai', 'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli', 'Tirupathur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore', 'Viluppuram', 'Virudhunagar']} required error={errors.twelfthDistrictStudied} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="School Region type" name="twelfthSchoolRegionType" value={formData.twelfthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required />
-                                        <CustomDropdown label="12th standard school type" name="twelfthSchoolType" value={formData.twelfthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required />
+                                        <CustomDropdown label="School Region type" name="twelfthSchoolRegionType" value={formData.twelfthSchoolRegionType} onChange={handleChange} options={['Village', 'Town', 'City']} required error={errors.twelfthSchoolRegionType} />
+                                        <CustomDropdown label="12th standard school type" name="twelfthSchoolType" value={formData.twelfthSchoolType} onChange={handleChange} options={['Government School', 'Government Aided School', 'Private School']} required error={errors.twelfthSchoolType} />
                                     </div>
                                     <div className="grid-flex">
-                                        <CustomDropdown label="Year passed 12th Standard" name="twelfthYearPassed" value={formData.twelfthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required />
-                                        <CustomDropdown label="Select your subjects" name="twelfthSubjects" value={formData.twelfthSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} required />
+                                        <CustomDropdown label="Year passed 12th Standard" name="twelfthYearPassed" value={formData.twelfthYearPassed} onChange={handleChange} options={['2018', '2019', '2020', '2021', '2022', '2023', '2024']} required error={errors.twelfthYearPassed} />
+                                        <CustomDropdown label="Select your subjects" name="twelfthSubjects" value={formData.twelfthSubjects} onChange={handleChange} options={['Mathematics / Physics / Chemistry / Statistics', 'Accountancy / Commerce / Economics / History', 'Accountancy / Business Maths / Commerce / Economics', 'Accountancy / Commerce / Economics / Political Science', 'Commerce / Economics / Accountancy / Statistics', 'Biology / Chemistry / Mathematics / Physics', 'Botany / Chemistry / Physics / Zoology', 'Chemistry / Computer Science / Mathematics / Physics', 'Accountancy / Commerce / Computer Science / Economics', 'Accountancy / Commerce / Business Maths / Economics']} required error={errors.twelfthSubjects} />
                                     </div>
 
 
@@ -802,8 +1099,8 @@ const StudentAdmission = () => {
                                     <div className="form-sub-container">
                                         <h4 className="label-sub">12th Standard Subject Marks</h4>
                                         <div className="grid-flex">
-                                            <InputField label="Subject 1: Tamil / Language marks" type="number" name="twelfthSubject1Marks" value={formData.twelfthSubject1Marks} onChange={handleChange} required />
-                                            <InputField label="Subject 2: English marks" type="number" name="twelfthSubject2Marks" value={formData.twelfthSubject2Marks} onChange={handleChange} required />
+                                            <InputField label="Subject 1: Tamil / Language marks" type="number" name="twelfthSubject1Marks" value={formData.twelfthSubject1Marks} onChange={handleChange} required error={errors.twelfthSubject1Marks} />
+                                            <InputField label="Subject 2: English marks" type="number" name="twelfthSubject2Marks" value={formData.twelfthSubject2Marks} onChange={handleChange} required error={errors.twelfthSubject2Marks} />
                                         </div>
 
                                         {/* Dynamic Major Subject Marks - Shows inside the same container */}
@@ -820,9 +1117,10 @@ const StudentAdmission = () => {
                                                             value={formData[getSubjectKey('twelfth', subject)]}
                                                             onChange={handleChange}
                                                             required
+                                                            error={errors[getSubjectKey('twelfth', subject)]}
                                                         />
                                                     ))}
-                                                    <InputField label="12th Total Marks" type="number" name="twelfthTotalMarks" value={formData.twelfthTotalMarks} onChange={handleChange} required />
+                                                    <InputField label="12th Total Marks" type="number" name="twelfthTotalMarks" value={formData.twelfthTotalMarks} onChange={handleChange} required error={errors.twelfthTotalMarks} />
                                                 </div>
                                             </div>
                                         )}
@@ -952,6 +1250,33 @@ const localStyles = (
             position: relative; width: 100%; height: 56px; background: #fff; border: 2px solid #b2bec3; border-radius: 16px; 
             cursor: pointer; display: flex; align-items: center; transition: all 0.3s ease;
         }
+
+        .dev-fill-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.6rem 1rem;
+            border-radius: 12px;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .dev-fill-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+            transform: translateY(-1px);
+        }
+
+        .dev-fill-btn:active {
+            transform: translateY(0);
+        }
         .custom-dropdown-wrap:hover { border-color: #94a3b8; background: #fcfcfc; }
         .custom-dropdown-wrap.active { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(0, 209, 193, 0.1); transform: translateY(-2px); }
         .dropdown-selected { flex: 1; padding: 0 1.4rem; font-size: 1rem; font-family: 'Outfit', sans-serif; font-weight: 400; color: #111827; user-select: none; }
@@ -1001,10 +1326,10 @@ const localStyles = (
         .id-meta { display: block; font-size: 0.75rem; font-weight: 900; color: #94a3b8; letter-spacing: 0.15em; margin-bottom: 1rem; }
         .id-value-row { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
         .id-text { font-family: 'Space Mono', monospace; font-size: 1.8rem; font-weight: 900; color: #111827; }
-        .id-copy-btn { 
-            width: 48px; height: 48px; border-radius: 14px; border: none; background: white; color: #64748b; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
+        .error-message-cln { color: #ef4444; font-size: 0.75rem; font-weight: 700; margin-top: 0.5rem; display: block; }
+        .error-ring { border-color: #ef4444 !important; }
+        .form-group-admission.has-error .field-icon-cln { color: #ef4444; }
+        .form-group-admission.has-error label { color: #ef4444; }
         .id-copy-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
         .id-copy-btn.copied { background: #22c55e; color: white; }
         .id-footer { display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #0d9488; font-size: 0.8rem; font-weight: 700; opacity: 0.8; }
