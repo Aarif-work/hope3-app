@@ -1,16 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import confetti from 'canvas-confetti';
 import {
     Facebook,
     Instagram,
     Twitter,
-    Play,
     Search,
     ArrowRight,
     Sparkles,
     ShieldCheck,
     Heart,
-    GraduationCap
+    GraduationCap,
+    UserCog
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import logo from '../assets/hope logo.png';
@@ -30,6 +31,25 @@ const LandingPage = () => {
         }, 4000);
         return () => clearInterval(interval);
     }, []);
+
+    const handleHover = (e, color) => {
+        const rect = e.target.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+
+        confetti({
+            particleCount: 40,
+            spread: 70,
+            origin: { x, y },
+            colors: [color, '#ffffff', '#fbbf24'],
+            zIndex: 1, // Set lower than the circle to appear "behind" or at same level
+            startVelocity: 30,
+            gravity: 0.8,
+            ticks: 60,
+            shapes: ['circle', 'square'],
+            scalar: 0.7
+        });
+    };
 
     return (
         <>
@@ -80,8 +100,9 @@ const LandingPage = () => {
                                 <motion.div
                                     className="node-main-circle"
                                     onClick={() => navigate('/apply')}
+                                    onMouseEnter={(e) => handleHover(e, '#00d1c1')}
                                 >
-                                    <Search size={72} strokeWidth={1.5} className="node-icon" />
+                                    <GraduationCap size={56} strokeWidth={1.5} className="node-icon" />
                                 </motion.div>
                             </div>
                         </motion.div>
@@ -103,8 +124,9 @@ const LandingPage = () => {
                                 <motion.div
                                     className="node-main-circle"
                                     onClick={() => navigate('/login')}
+                                    onMouseEnter={(e) => handleHover(e, '#fbbf24')}
                                 >
-                                    <Play size={72} className="node-icon play-icon" />
+                                    <UserCog size={56} strokeWidth={1.5} className="node-icon" />
                                 </motion.div>
                             </div>
                         </motion.div>

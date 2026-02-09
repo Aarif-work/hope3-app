@@ -570,7 +570,7 @@ const StudentAdmission = () => {
     // Calculate total steps based on course completed
     const totalSteps = formData.tenthCourseCompleted === 'Diploma' ? 5 :
         formData.tenthCourseCompleted === '11th' ? 5 :
-            formData.tenthCourseCompleted === '12th' ? 6 : 3;
+            formData.tenthCourseCompleted === '12th' ? 6 : 6;
 
     const handleNext = () => {
         if (validateStep(step)) {
@@ -1410,6 +1410,49 @@ const localStyles = (
             .signature-box { text-align: center; width: 200px; }
             .sig-line { border-top: 1px solid #000; margin-bottom: 10px; }
             .signature-box p { font-size: 12px; font-weight: 700; margin: 0; }
+        }
+
+        /* --- Mobile Responsive Overrides --- */
+        @media (max-width: 768px) {
+            .central-form-view { padding: 2rem 0.5rem; }
+            .admission-nav-top { flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; align-items: flex-start; }
+            .logo-brand-cln { width: 100%; justify-content: space-between; }
+            .dev-fill-btn { order: 2; margin-top: 1rem; width: 100%; justify-content: center; }
+            
+            .title-cln { font-size: 1.6rem; margin-bottom: 1.5rem; }
+            .form-card-padding { padding: 1.5rem; border-radius: 20px; overflow: hidden; }
+            
+            .step-tracker-visual { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin: 0 auto 2.5rem; }
+            .step-node { width: 34px; height: 34px; min-width: 34px; font-size: 0.85rem; }
+            .step-connector { width: 25px; min-width: 25px; height: 2px; }
+            
+            .grid-flex { grid-template-columns: 1fr; gap: 1.5rem; }
+            .step-heading { font-size: 1.2rem; margin-bottom: 1.5rem; padding-left: 1rem; }
+            .form-sub-container { padding: 1.2rem; border-radius: 16px; }
+            
+            .enhanced-input { padding: 0.9rem 1.1rem; font-size: 0.95rem; }
+            .enhanced-input.with-icon { padding-left: 3rem; }
+            .field-icon-cln { left: 0.9rem; }
+            
+            .form-actions-row { flex-direction: column-reverse; gap: 1rem; margin-top: 2rem; }
+            .btn-primary-cln, .btn-secondary-cln { width: 100%; padding: 1rem; flex: none; }
+            
+            .compliance-box { padding: 1.2rem; gap: 1rem; }
+            
+            /* Success Page Mobile */
+            .success-card-premium { padding: 2.5rem 1.5rem; border-radius: 32px; }
+            .premium-success-title { font-size: 1.8rem; }
+            .premium-success-subtitle { font-size: 0.95rem; margin-bottom: 2rem; }
+            .hope-id-box { padding: 1.5rem; border-radius: 24px; }
+            .id-text { font-size: 1.3rem; }
+            .success-actions { flex-direction: column; width: 100%; }
+            .success-btn { width: 100%; justify-content: center; }
+        }
+
+        @media (max-width: 480px) {
+            .title-cln { font-size: 1.4rem; }
+            .step-node { width: 28px; height: 28px; min-width: 28px; }
+            .step-connector { width: 15px; min-width: 15px; }
         }
     `}</style>
 );
