@@ -214,17 +214,17 @@ const LandingPage = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
                     >
-                        <h1 className="hero-title" style={{ fontSize: '2.5rem' }}>
+                        <h1 className="hero-title">
                             Bringing Creative Education into life
                         </h1>
-                        <p className="hero-description" style={{ fontSize: '0.95rem', lineHeight: '1.7', opacity: 0.8 }}>
+                        <p className="hero-description">
                             HOPE3 Foundation started with the vision to empower earnest, circumstantially challenged students to realize their true potential through higher education, parallel immersive learning, one-on-one mentorship, and a powerful network of academic and industry partners.
                         </p>
-                        <p className="hero-description" style={{ marginTop: '1.5rem', fontWeight: '800', fontSize: '1rem', color: 'var(--primary)', letterSpacing: '0.05em' }}>
+                        <p className="hero-description highlight-text" style={{ marginTop: '1.5rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '0.05em' }}>
                             THE THREE PILLARS: EDUCATION, EMPOWERMENT AND ENTREPRENEURSHIP.
                         </p>
 
-                        <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', marginTop: '3rem', opacity: 0.4 }}>
+                        <div className="mobile-socials" style={{ display: 'flex', gap: '2rem', justifyContent: 'center', marginTop: '3rem', opacity: 0.4 }}>
                             <Facebook size={18} className="social-icon" />
                             <Instagram size={18} className="social-icon" />
                             <Twitter size={18} className="social-icon" />
@@ -233,7 +233,7 @@ const LandingPage = () => {
                 </main>
 
                 {/* Footer Labels */}
-                <div style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '3rem', zIndex: 10 }}>
+                <div className="footer-label-wrap" style={{ position: 'absolute', bottom: '2rem', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '3rem', zIndex: 10 }}>
                     <span style={{ fontSize: '0.65rem', fontWeight: '800', color: '#1e293b', opacity: 0.4, cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.2em' }}>Impact Portal 2026</span>
                 </div>
             </div>

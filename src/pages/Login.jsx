@@ -31,7 +31,11 @@ const Login = () => {
     // Artificial delay for premium feel
     await new Promise(resolve => setTimeout(resolve, 800));
 
-    if (email.toLowerCase().includes('donor')) {
+    const lowerEmail = email.toLowerCase();
+
+    if ((lowerEmail === 'superadmin@hope3.org' || lowerEmail === 'superadmin@gmail.com') && password === 'super123') {
+      navigate('/super-admin/dashboard');
+    } else if (lowerEmail.includes('donor')) {
       navigate('/donor-dashboard');
     } else {
       navigate('/admin-dashboard');

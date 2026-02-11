@@ -563,14 +563,25 @@ const StudentAdmission = () => {
             }
         }
 
+        // Step 6 is the confirmation step - no validation needed, just allow to proceed
+        if (currentStep === 6) {
+            // No validation required for confirmation step
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     // Calculate total steps based on course completed
+    // Step 1: Student Details
+    // Step 2: Relative's Information
+    // Step 3: 10th Education Details
+    // Step 4: Diploma/11th/12th Details
+    // Step 5: 12th Details (only if 12th selected) OR Confirmation (if Diploma/11th)
+    // Step 6: Confirmation (only if 12th selected)
     const totalSteps = formData.tenthCourseCompleted === 'Diploma' ? 5 :
         formData.tenthCourseCompleted === '11th' ? 5 :
-            formData.tenthCourseCompleted === '12th' ? 6 : 6;
+            formData.tenthCourseCompleted === '12th' ? 6 : 5;
 
     const handleNext = () => {
         if (validateStep(step)) {
@@ -1128,7 +1139,9 @@ const StudentAdmission = () => {
                                 </motion.div>
                             )}
 
-                            {step === totalSteps && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th') && (
+                            {/* Step 5 for Diploma/11th OR Step 6 for 12th - Final Confirmation */}
+                            {((step === 5 && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th')) || 
+                              (step === 6 && formData.tenthCourseCompleted === '12th')) && (
                                 <motion.div key="completion-step" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
                                     <h3 className="step-heading">Submit Application</h3>
                                     <div className="compliance-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', padding: '2.5rem' }}>
