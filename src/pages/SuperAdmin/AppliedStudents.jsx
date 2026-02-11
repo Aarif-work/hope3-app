@@ -1,17 +1,79 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import SuperAdminLayout from '../../components/SuperAdmin/SuperAdminLayout';
+import StudentDetailView from '../../components/SuperAdmin/StudentDetailView';
+import AdminTable from '../../components/SuperAdmin/AdminTable';
 import { Eye, Search, Filter } from 'lucide-react';
 
 const AppliedStudents = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedStudent, setSelectedStudent] = useState(null);
 
     const applications = [
-        { id: 'HOPE3-2026-001', name: 'Alisa Martin', course: 'UX/UI Design', date: '2026-02-05', status: 'Applied' },
-        { id: 'HOPE3-2026-002', name: 'Robert Fox', course: 'Web Development', date: '2026-02-04', status: 'Applied' },
-        { id: 'HOPE3-2026-003', name: 'Jenny Wilson', course: 'Data Science', date: '2026-02-03', status: 'Applied' },
-        { id: 'HOPE3-2026-004', name: 'Cody Fisher', course: 'Digital Marketing', date: '2026-02-02', status: 'Applied' },
-        { id: 'HOPE3-2026-005', name: 'Savannah Nguyen', course: 'UX/UI Design', date: '2026-02-01', status: 'Applied' },
+        { id: 'HOPE3-2026-001', name: 'Alisa Martin', course: 'UX/UI Design', date: '2026-02-05', status: 'Applied', hopeId: 'APP-001' },
+        { id: 'HOPE3-2026-002', name: 'Robert Fox', course: 'Web Development', date: '2026-02-04', status: 'Applied', hopeId: 'APP-002' },
+        { id: 'HOPE3-2026-003', name: 'Jenny Wilson', course: 'Data Science', date: '2026-02-03', status: 'Applied', hopeId: 'APP-003' },
+        { id: 'HOPE3-2026-004', name: 'Cody Fisher', course: 'Digital Marketing', date: '2026-02-02', status: 'Applied', hopeId: 'APP-004' },
+        { id: 'HOPE3-2026-005', name: 'Savannah Nguyen', course: 'UX/UI Design', date: '2026-02-01', status: 'Applied', hopeId: 'APP-005' },
     ];
+
+    // Filter applications based on search term
+    const filteredApplications = useMemo(() => {
+        return applications.filter(app =>
+            app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            app.id.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [searchTerm]);
+
+    const colDefs = useMemo(() => [
+        { field: 'id', headerName: 'Application ID', flex: 1.5 },
+        {
+            field: 'name',
+            headerName: 'Name',
+            cellStyle: { fontWeight: 600 }
+        },
+        { field: 'course', headerName: 'Course' },
+        { field: 'date', headerName: 'Applied Date' },
+        {
+            field: 'status',
+            headerName: 'Status',
+            cellRenderer: (params) => (
+                <span className="status-badge status-applied">{params.value}</span>
+            )
+        },
+        {
+            headerName: 'Action',
+            field: 'actions',
+            cellRenderer: (params) => (
+                <button
+                    className="action-btn"
+                    title="View Details"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedStudent(params.data);
+                    }}
+                >
+                    <Eye size={18} />
+                </button>
+            ),
+            width: 100,
+            sortable: false,
+            filter: false
+        }
+    ], []);
+
+    if (selectedStudent) {
+        return (
+            <SuperAdminLayout
+                title="Application Details"
+                subtitle={`Viewing application for ${selectedStudent.name}`}
+            >
+                <StudentDetailView
+                    student={selectedStudent}
+                    onBack={() => setSelectedStudent(null)}
+                />
+            </SuperAdminLayout>
+        );
+    }
 
     return (
         <SuperAdminLayout
@@ -37,59 +99,15 @@ const AppliedStudents = () => {
                     </div>
                 </div>
 
-                <div className="admin-table-container">
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Application ID</th>
-                                <th>Name</th>
-                                <th>Course</th>
-                                <th>Applied Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {applications.map((app) => (
-                                <tr key={app.id}>
-                                    <td>{app.id}</td>
-                                    <td style={{ fontWeight: 600 }}>{app.name}</td>
-                                    <td>{app.course}</td>
-                                    <td>{app.date}</td>
-                                    <td>
-                                        <span className="status-badge status-applied">{app.status}</span>
-                                    </td>
-                                    <td>
-                                        <button className="action-btn" title="View Details">
-                                            <Eye size={18} />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div style={{ padding: '1.5rem', borderTop: '1px solid var(--admin-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--admin-text-light)' }}>Showing 1 to 5 of 45 applications</p>
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
-                        <button className="admin-btn admin-btn-outline" disabled>Previous</button>
-                        <button className="admin-btn admin-btn-outline">Next</button>
-                    </div>
+                <div className="ag-theme-quartz" style={{ width: '100%' }}>
+                    <AdminTable
+                        rowData={filteredApplications}
+                        colDefs={colDefs}
+                        onRowClicked={(event) => setSelectedStudent(event.data)}
+                    />
                 </div>
             </div>
 
-            <div style={{
-                marginTop: '1rem',
-                padding: '1rem',
-                borderRadius: '0.5rem',
-                backgroundColor: '#eff6ff',
-                borderLeft: '4px solid #2563eb',
-                fontSize: '0.875rem',
-                color: '#1e40af'
-            }}>
-                <strong>Note:</strong> This page is read-only. To manage students, please go to the Students Management page.
-            </div>
         </SuperAdminLayout>
     );
 };

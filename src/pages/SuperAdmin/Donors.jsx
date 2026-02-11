@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import SuperAdminLayout from '../../components/SuperAdmin/SuperAdminLayout';
+import AdminTable from '../../components/SuperAdmin/AdminTable';
 import {
     Plus,
     Search,
     Eye,
     Settings,
     UserX,
-    UserCheck,
-    Heart
+    UserCheck
 } from 'lucide-react';
 
 const DonorsPage = () => {
@@ -18,6 +18,69 @@ const DonorsPage = () => {
         { id: 2, name: 'Heritage Foundation', contact: 'Emily Watson', type: 'NGO', status: 'Active', visibility: 'Restricted' },
         { id: 3, name: 'Dr. Robert Wilson', contact: 'Robert Wilson', type: 'Individual', status: 'Inactive', visibility: 'Basic' },
     ];
+
+    // Filter donors based on search term
+    const filteredDonors = useMemo(() => {
+        return donors.filter(donor =>
+            donor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            donor.contact.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [searchTerm]);
+
+    const colDefs = useMemo(() => [
+        {
+            field: 'name',
+            headerName: 'Donor Organization / Name',
+            flex: 1.5,
+            cellStyle: { fontWeight: 600 }
+        },
+        { field: 'contact', headerName: 'Primary Contact' },
+        { field: 'type', headerName: 'Donor Type' },
+        {
+            field: 'visibility',
+            headerName: 'Data Visibility',
+            cellRenderer: (params) => (
+                <span style={{
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '4px',
+                    fontSize: '0.75rem',
+                    border: '1px solid var(--admin-border)',
+                    color: 'var(--admin-text-light)'
+                }}>
+                    {params.value}
+                </span>
+            )
+        },
+        {
+            field: 'status',
+            headerName: 'Status',
+            cellRenderer: (params) => (
+                <span className={`status-badge ${params.value === 'Active' ? 'status-active' : 'status-inactive'}`}>
+                    {params.value}
+                </span>
+            )
+        },
+        {
+            headerName: 'Actions',
+            field: 'actions',
+            cellRenderer: (params) => (
+                <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center', height: '100%' }}>
+                    <button className="action-btn" title="Visibility Settings">
+                        <Settings size={16} />
+                    </button>
+                    <button className="action-btn" title="View Donor Dashboard">
+                        <Eye size={16} />
+                    </button>
+                    <button className="action-btn" title={params.data.status === 'Active' ? 'Deactivate' : 'Activate'}>
+                        {params.data.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
+                    </button>
+                </div>
+            ),
+            width: 150,
+            sortable: false,
+            filter: false
+        }
+    ], []);
 
     return (
         <SuperAdminLayout
@@ -41,89 +104,14 @@ const DonorsPage = () => {
                     </button>
                 </div>
 
-                <div className="admin-table-container">
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Donor Organization / Name</th>
-                                <th>Primary Contact</th>
-                                <th>Donor Type</th>
-                                <th>Data Visibility</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {donors.map((donor) => (
-                                <tr key={donor.id}>
-                                    <td style={{ fontWeight: 600 }}>{donor.name}</td>
-                                    <td>{donor.contact}</td>
-                                    <td>{donor.type}</td>
-                                    <td>
-                                        <span style={{
-                                            padding: '0.2rem 0.6rem',
-                                            borderRadius: '4px',
-                                            fontSize: '0.75rem',
-                                            border: '1px solid var(--admin-border)',
-                                            color: 'var(--admin-text-light)'
-                                        }}>
-                                            {donor.visibility}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`status-badge ${donor.status === 'Active' ? 'status-active' : 'status-inactive'}`}>
-                                            {donor.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                            <button className="action-btn" title="Visibility Settings">
-                                                <Settings size={16} />
-                                            </button>
-                                            <button className="action-btn" title="View Donor Dashboard">
-                                                <Eye size={16} />
-                                            </button>
-                                            <button className="action-btn" title={donor.status === 'Active' ? 'Deactivate' : 'Activate'}>
-                                                {donor.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="ag-theme-quartz" style={{ width: '100%' }}>
+                    <AdminTable
+                        rowData={filteredDonors}
+                        colDefs={colDefs}
+                    />
                 </div>
             </div>
 
-            <div style={{
-                marginTop: '1.5rem',
-                padding: '1.5rem',
-                backgroundColor: '#fef3f2',
-                borderRadius: '0.75rem',
-                border: '1px solid #fee2e2',
-                display: 'flex',
-                gap: '1rem',
-                alignItems: 'center'
-            }}>
-                <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '50%',
-                    background: '#fee2e2',
-                    color: '#dc2626',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                    <Heart size={24} />
-                </div>
-                <div>
-                    <h4 style={{ color: '#991b1b', marginBottom: '0.25rem' }}>Donor Access Rule</h4>
-                    <p style={{ fontSize: '0.875rem', color: '#b91c1c' }}>
-                        All donor accounts are strictly **Read-Only**. They can only view the data you authorize. They cannot modify student records or system settings.
-                    </p>
-                </div>
-            </div>
         </SuperAdminLayout>
     );
 };

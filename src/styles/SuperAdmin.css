@@ -94,7 +94,8 @@
 .admin-main {
     flex: 1;
     margin-left: var(--admin-sidebar-w);
-    padding: 2rem 3rem;
+    padding: 3rem 4rem;
+    /* Enhanced padding for better spacing */
     min-width: 0;
 }
 
@@ -319,6 +320,21 @@
 }
 
 /* Form Elements */
+.admin-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    /* Space between groups */
+}
+
+.admin-form-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--admin-text);
+    letter-spacing: -0.01em;
+}
+
 .search-wrapper {
     position: relative;
     display: flex;
@@ -355,12 +371,18 @@
 .admin-input,
 .admin-select {
     width: 100%;
-    padding: 0.75rem 1rem;
-    border-radius: 0.625rem;
+    padding: 0.85rem 1rem;
+    /* Slightly more padding */
+    border-radius: 0.75rem;
+    /* More rounded */
     border: 1.5px solid var(--admin-border);
-    font-size: 0.875rem;
+    font-size: 0.95rem;
+    /* Larger text */
     transition: all 0.2s;
-    height: 44px;
+    height: 52px;
+    /* Taller inputs for premium feel */
+    background: #ffffff;
+    color: var(--admin-text);
 }
 
 .admin-input:focus,

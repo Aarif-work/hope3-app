@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import SuperAdminLayout from '../../components/SuperAdmin/SuperAdminLayout';
+import AdminTable from '../../components/SuperAdmin/AdminTable';
 import {
     Plus,
     Search,
     Edit,
     Key,
     UserX,
-    UserCheck,
-    Shield
+    UserCheck
 } from 'lucide-react';
 
 const AdminsPage = () => {
@@ -28,6 +28,61 @@ const AdminsPage = () => {
             default: return { background: '#f8fafc', color: '#475569' };
         }
     };
+
+    // Filter admins based on search term
+    const filteredAdmins = useMemo(() => {
+        return admins.filter(admin =>
+            admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            admin.email.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }, [searchTerm]);
+
+    const colDefs = useMemo(() => [
+        {
+            field: 'name',
+            headerName: 'Admin Name',
+            cellStyle: { fontWeight: 600 }
+        },
+        { field: 'email', headerName: 'Email Address', flex: 1.5 },
+        {
+            field: 'role',
+            headerName: 'Role Type',
+            cellRenderer: (params) => (
+                <span className="status-badge" style={getRoleBadgeStyle(params.value)}>
+                    {params.value}
+                </span>
+            )
+        },
+        {
+            field: 'status',
+            headerName: 'Status',
+            cellRenderer: (params) => (
+                <span className={`status-badge ${params.value === 'Active' ? 'status-active' : 'status-inactive'}`}>
+                    {params.value}
+                </span>
+            )
+        },
+        {
+            headerName: 'Actions',
+            field: 'actions',
+            cellRenderer: (params) => (
+                <div style={{ display: 'flex', gap: '0.25rem', alignItems: 'center', height: '100%' }}>
+                    <button className="action-btn" title="Edit Admin">
+                        <Edit size={16} />
+                    </button>
+                    <button className="action-btn" title="Reset Password">
+                        <Key size={16} />
+                    </button>
+                    <button className="action-btn" title={params.data.status === 'Active' ? 'Deactivate' : 'Activate'}>
+                        {params.data.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
+                    </button>
+                </div>
+            ),
+            width: 150,
+            sortable: false,
+            filter: false
+        }
+    ], []);
 
     return (
         <SuperAdminLayout
@@ -51,71 +106,12 @@ const AdminsPage = () => {
                     </button>
                 </div>
 
-                <div className="admin-table-container">
-                    <table className="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Admin Name</th>
-                                <th>Email Address</th>
-                                <th>Role Type</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {admins.map((admin) => (
-                                <tr key={admin.id}>
-                                    <td style={{ fontWeight: 600 }}>{admin.name}</td>
-                                    <td>{admin.email}</td>
-                                    <td>
-                                        <span className="status-badge" style={getRoleBadgeStyle(admin.role)}>
-                                            {admin.role}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`status-badge ${admin.status === 'Active' ? 'status-active' : 'status-inactive'}`}>
-                                            {admin.status}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div style={{ display: 'flex', gap: '0.25rem' }}>
-                                            <button className="action-btn" title="Edit Admin">
-                                                <Edit size={16} />
-                                            </button>
-                                            <button className="action-btn" title="Reset Password">
-                                                <Key size={16} />
-                                            </button>
-                                            <button className="action-btn" title={admin.status === 'Active' ? 'Deactivate' : 'Activate'}>
-                                                {admin.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                <div className="ag-theme-quartz" style={{ width: '100%' }}>
+                    <AdminTable
+                        rowData={filteredAdmins}
+                        colDefs={colDefs}
+                    />
                 </div>
-            </div>
-
-            {/* Role Permissions Summary */}
-            <div className="stats-grid" style={{ marginTop: '2rem' }}>
-                {[
-                    { role: 'Founder', desc: 'Full system access, manage finances, and all administration.' },
-                    { role: 'Staff', desc: 'Manage students, handle admissions, and generate reports.' },
-                    { role: 'Volunteer', desc: 'ReadOnly access to student list and basic dashboard metrics.' }
-                ].map((info, i) => (
-                    <div key={i} className="admin-card" style={{ padding: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                            <div style={{ padding: '0.5rem', borderRadius: '0.5rem', background: 'var(--admin-primary-light)', color: 'var(--admin-primary)' }}>
-                                <Shield size={20} />
-                            </div>
-                            <h3 style={{ fontSize: '1rem', fontWeight: 600 }}>{info.role}</h3>
-                        </div>
-                        <p style={{ fontSize: '0.875rem', color: 'var(--admin-text-light)', lineHeight: 1.5 }}>
-                            {info.desc}
-                        </p>
-                    </div>
-                ))}
             </div>
         </SuperAdminLayout>
     );

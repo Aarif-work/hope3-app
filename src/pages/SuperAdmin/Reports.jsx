@@ -15,36 +15,6 @@ const ReportsPage = () => {
             title="System Reports"
             subtitle="Generate and download comprehensive system reports"
         >
-            <div className="admin-card" style={{ padding: '2rem', textAlign: 'center', marginBottom: '2rem' }}>
-                <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-                    <div style={{
-                        width: '64px',
-                        height: '64px',
-                        borderRadius: '1rem',
-                        background: 'var(--admin-primary-light)',
-                        color: 'var(--admin-primary)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        margin: '0 auto 1.5rem auto'
-                    }}>
-                        <FileBarChart size={32} />
-                    </div>
-                    <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>Analytics & Insights</h2>
-                    <p style={{ color: 'var(--admin-text-light)', marginBottom: '2rem' }}>
-                        Choose a report category below to generate detailed insights. You can export data in PDF, Excel, or CSV formats.
-                    </p>
-                    <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: '#f8fafc', borderRadius: '0.5rem', border: '1px solid var(--admin-border)' }}>
-                            <Calendar size={18} />
-                            <span style={{ fontSize: '0.875rem' }}>Full Academic Year 2025-26</span>
-                        </div>
-                        <button className="admin-btn admin-btn-primary">
-                            Generate Annual Overview
-                        </button>
-                    </div>
-                </div>
-            </div>
 
             <div className="stats-grid">
                 {reportCategories.map((report, i) => (

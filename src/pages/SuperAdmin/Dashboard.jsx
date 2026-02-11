@@ -16,7 +16,6 @@ const Dashboard = () => {
     const stats = [
         { label: 'Total Students', value: '1,280', icon: Users, color: '#2563eb', bg: '#eff6ff', path: '/super-admin/students' },
         { label: 'Total Applications', value: '450', icon: ClipboardList, color: '#f59e0b', bg: '#fffbeb', path: '/super-admin/applied' },
-        { label: 'Active Students', value: '1,120', icon: UserCheck, color: '#22c55e', bg: '#f0fdf4', path: '/super-admin/students' },
         { label: 'Admission Trend', value: '+12%', icon: TrendingUp, color: '#8b5cf6', bg: '#f5f3ff', path: '/super-admin/reports' },
     ];
 
