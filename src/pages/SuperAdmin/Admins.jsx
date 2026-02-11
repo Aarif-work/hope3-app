@@ -7,18 +7,22 @@ import {
     Edit,
     Key,
     UserX,
-    UserCheck
+    UserCheck,
+    Trash2
 } from 'lucide-react';
 
 const AdminsPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-    const admins = [
+    const [admins, setAdmins] = useState([
         { id: 1, name: 'Aarif Rahaman', email: 'aarif@hope3.org', role: 'Founder', status: 'Active' },
         { id: 2, name: 'Sarah Jamal', email: 'sarah@hope3.org', role: 'Staff', status: 'Active' },
         { id: 3, name: 'Mohammed Ali', email: 'ali@hope3.org', role: 'Volunteer', status: 'Inactive' },
         { id: 4, name: 'Priya Dharshini', email: 'priya@hope3.org', role: 'Staff', status: 'Active' },
-    ];
+    ]);
+
+    const [newAdmin, setNewAdmin] = useState({ name: '', email: '', role: 'Staff' });
 
     const getRoleBadgeStyle = (role) => {
         switch (role) {
@@ -29,13 +33,31 @@ const AdminsPage = () => {
         }
     };
 
+    const handleAddAdmin = (e) => {
+        e.preventDefault();
+        const newId = admins.length > 0 ? Math.max(...admins.map(a => a.id)) + 1 : 1;
+        setAdmins([...admins, { ...newAdmin, id: newId, status: 'Active' }]);
+        setIsAddModalOpen(false);
+        setNewAdmin({ name: '', email: '', role: 'Staff' });
+    };
+
+    const handleDeleteAdmin = (id) => {
+        if (window.confirm('Are you sure you want to remove this admin?')) {
+            setAdmins(admins.filter(a => a.id !== id));
+        }
+    };
+
+    const toggleStatus = (id) => {
+        setAdmins(admins.map(a => a.id === id ? { ...a, status: a.status === 'Active' ? 'Inactive' : 'Active' } : a));
+    };
+
     // Filter admins based on search term
     const filteredAdmins = useMemo(() => {
         return admins.filter(admin =>
             admin.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             admin.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    }, [searchTerm]);
+    }, [searchTerm, admins]);
 
     const colDefs = useMemo(() => [
         {
@@ -57,7 +79,11 @@ const AdminsPage = () => {
             field: 'status',
             headerName: 'Status',
             cellRenderer: (params) => (
-                <span className={`status-badge ${params.value === 'Active' ? 'status-active' : 'status-inactive'}`}>
+                <span
+                    onClick={() => toggleStatus(params.data.id)}
+                    className={`status-badge ${params.value === 'Active' ? 'status-active' : 'status-inactive'}`}
+                    style={{ cursor: 'pointer' }}
+                >
                     {params.value}
                 </span>
             )
@@ -70,11 +96,19 @@ const AdminsPage = () => {
                     <button className="action-btn" title="Edit Admin">
                         <Edit size={16} />
                     </button>
-                    <button className="action-btn" title="Reset Password">
-                        <Key size={16} />
-                    </button>
-                    <button className="action-btn" title={params.data.status === 'Active' ? 'Deactivate' : 'Activate'}>
+                    <button
+                        className="action-btn"
+                        title={params.data.status === 'Active' ? 'Deactivate' : 'Activate'}
+                        onClick={() => toggleStatus(params.data.id)}
+                    >
                         {params.data.status === 'Active' ? <UserX size={16} /> : <UserCheck size={16} />}
+                    </button>
+                    <button
+                        className="action-btn action-btn-delete"
+                        title="Delete Admin"
+                        onClick={() => handleDeleteAdmin(params.data.id)}
+                    >
+                        <Trash2 size={16} />
                     </button>
                 </div>
             ),
@@ -82,7 +116,7 @@ const AdminsPage = () => {
             sortable: false,
             filter: false
         }
-    ], []);
+    ], [admins]);
 
     return (
         <SuperAdminLayout
@@ -101,7 +135,10 @@ const AdminsPage = () => {
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <button className="admin-btn admin-btn-primary">
+                    <button
+                        className="admin-btn admin-btn-primary"
+                        onClick={() => setIsAddModalOpen(true)}
+                    >
                         <Plus size={18} /> Create Admin
                     </button>
                 </div>
@@ -113,6 +150,81 @@ const AdminsPage = () => {
                     />
                 </div>
             </div>
+
+            {/* Add Admin Modal */}
+            {isAddModalOpen && (
+                <div style={{
+                    position: 'fixed',
+                    inset: 0,
+                    zIndex: 1000,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '1rem'
+                }}>
+                    <div
+                        onClick={() => setIsAddModalOpen(false)}
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'rgba(0, 0, 0, 0.4)',
+                            backdropFilter: 'blur(4px)'
+                        }}
+                    />
+                    <div style={{
+                        position: 'relative',
+                        width: '100%',
+                        maxWidth: '500px',
+                        background: 'white',
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                        padding: '1.5rem',
+                        animation: 'fadeIn 0.2s ease-out'
+                    }}>
+                        <h3 className="card-title" style={{ marginBottom: '1.5rem' }}>Create New Admin</h3>
+                        <form onSubmit={handleAddAdmin}>
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Full Name</label>
+                                <input
+                                    type="text"
+                                    className="admin-input"
+                                    placeholder="Enter full name"
+                                    value={newAdmin.name}
+                                    onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Email Address</label>
+                                <input
+                                    type="email"
+                                    className="admin-input"
+                                    placeholder="admin@example.com"
+                                    value={newAdmin.email}
+                                    onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div className="admin-form-group">
+                                <label className="admin-form-label">Role</label>
+                                <select
+                                    className="admin-select"
+                                    value={newAdmin.role}
+                                    onChange={(e) => setNewAdmin({ ...newAdmin, role: e.target.value })}
+                                >
+                                    <option>Staff</option>
+                                    <option>Volunteer</option>
+                                    <option>Founder</option>
+                                </select>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '2rem' }}>
+                                <button type="button" className="admin-btn admin-btn-outline" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
+                                <button type="submit" className="admin-btn admin-btn-primary">Create Admin</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </SuperAdminLayout>
     );
 };
