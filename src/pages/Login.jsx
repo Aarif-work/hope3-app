@@ -33,11 +33,21 @@ const Login = () => {
 
     const lowerEmail = email.toLowerCase();
 
+    // Reset permissions
+    localStorage.removeItem('userRole');
+
     if ((lowerEmail === 'superadmin@hope3.org' || lowerEmail === 'superadmin@gmail.com') && password === 'super123') {
+      localStorage.setItem('userRole', 'SUPER_ADMIN');
       navigate('/super-admin/dashboard');
+    } else if (lowerEmail === 'admin@hope3.org' && password === 'admin123') {
+      localStorage.setItem('userRole', 'ADMIN');
+      navigate('/super-admin/dashboard'); // Redirect to same dashboard, but sidebar will be filtered
     } else if (lowerEmail.includes('donor')) {
+      localStorage.setItem('userRole', 'DONOR');
       navigate('/donor-dashboard');
     } else {
+      // Fallback/Legacy
+      localStorage.setItem('userRole', 'ADMIN');
       navigate('/admin-dashboard');
     }
     setIsLoading(false);

@@ -2,19 +2,27 @@ import React, { useState, useMemo } from 'react';
 import SuperAdminLayout from '../../components/SuperAdmin/SuperAdminLayout';
 import StudentDetailView from '../../components/SuperAdmin/StudentDetailView';
 import AdminTable from '../../components/SuperAdmin/AdminTable';
-import { Eye, Search, Filter } from 'lucide-react';
+import { Eye, Search, Filter, CheckCircle, XCircle } from 'lucide-react';
 
 const AppliedStudents = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStudent, setSelectedStudent] = useState(null);
 
-    const applications = [
+    const [applications, setApplications] = useState([
         { id: 'HOPE3-2026-001', name: 'Alisa Martin', course: 'UX/UI Design', date: '2026-02-05', status: 'Applied', hopeId: 'APP-001' },
         { id: 'HOPE3-2026-002', name: 'Robert Fox', course: 'Web Development', date: '2026-02-04', status: 'Applied', hopeId: 'APP-002' },
         { id: 'HOPE3-2026-003', name: 'Jenny Wilson', course: 'Data Science', date: '2026-02-03', status: 'Applied', hopeId: 'APP-003' },
         { id: 'HOPE3-2026-004', name: 'Cody Fisher', course: 'Digital Marketing', date: '2026-02-02', status: 'Applied', hopeId: 'APP-004' },
         { id: 'HOPE3-2026-005', name: 'Savannah Nguyen', course: 'UX/UI Design', date: '2026-02-01', status: 'Applied', hopeId: 'APP-005' },
-    ];
+    ]);
+
+    const handleStatusUpdate = (id, newStatus) => {
+        if (window.confirm(`Are you sure you want to ${newStatus === 'Approved' ? 'approve' : 'reject'} this application?`)) {
+            setApplications(applications.map(app =>
+                app.id === id ? { ...app, status: newStatus } : app
+            ));
+        }
+    };
 
     // Filter applications based on search term
     const filteredApplications = useMemo(() => {
@@ -22,7 +30,7 @@ const AppliedStudents = () => {
             app.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             app.id.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    }, [searchTerm]);
+    }, [searchTerm, applications]);
 
     const colDefs = useMemo(() => [
         { field: 'id', headerName: 'Application ID', flex: 1.5 },
@@ -36,30 +44,62 @@ const AppliedStudents = () => {
         {
             field: 'status',
             headerName: 'Status',
-            cellRenderer: (params) => (
-                <span className="status-badge status-applied">{params.value}</span>
-            )
+            cellRenderer: (params) => {
+                let badgeClass = 'status-applied';
+                if (params.value === 'Approved') badgeClass = 'status-active';
+                if (params.value === 'Rejected') badgeClass = 'status-inactive';
+
+                return <span className={`status-badge ${badgeClass}`}>{params.value}</span>;
+            }
         },
         {
-            headerName: 'Action',
+            headerName: 'Actions',
             field: 'actions',
             cellRenderer: (params) => (
-                <button
-                    className="action-btn"
-                    title="View Details"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedStudent(params.data);
-                    }}
-                >
-                    <Eye size={18} />
-                </button>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                    <button
+                        className="action-btn"
+                        title="View Details"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedStudent(params.data);
+                        }}
+                    >
+                        <Eye size={18} />
+                    </button>
+                    {params.data.status === 'Applied' && (
+                        <>
+                            <button
+                                className="action-btn"
+                                style={{ color: '#10b981', background: '#ecfdf5' }}
+                                title="Approve"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleStatusUpdate(params.data.id, 'Approved');
+                                }}
+                            >
+                                <CheckCircle size={18} />
+                            </button>
+                            <button
+                                className="action-btn"
+                                style={{ color: '#ef4444', background: '#fef2f2' }}
+                                title="Reject"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleStatusUpdate(params.data.id, 'Rejected');
+                                }}
+                            >
+                                <XCircle size={18} />
+                            </button>
+                        </>
+                    )}
+                </div>
             ),
-            width: 100,
+            width: 160,
             sortable: false,
             filter: false
         }
-    ], []);
+    ], [applications]);
 
     if (selectedStudent) {
         return (

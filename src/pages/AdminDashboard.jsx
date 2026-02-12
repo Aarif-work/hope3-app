@@ -54,8 +54,21 @@ const AdminDashboard = () => {
                 transform: `translateX(${isSidebarOpen ? '0' : window.innerWidth <= 1024 ? '-100%' : '0'})`,
                 zIndex: 100
             }}>
-                <div className="nav-logo" style={{ marginBottom: '3.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }} onClick={() => navigate('/')}>
-                    <img src={logo} alt="HOPE3 Logo" style={{ height: '40px' }} />
+                <div
+                    className="nav-logo"
+                    style={{ marginBottom: '3.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+                    onClick={() => navigate('/')}
+                >
+                    <img src={logo} alt="HOPE3 Logo" style={{ height: '36px' }} />
+                    <span style={{
+                        fontSize: '1.1rem',
+                        fontWeight: 800,
+                        color: '#1e293b',
+                        letterSpacing: '-0.02em',
+                        whiteSpace: 'nowrap'
+                    }}>
+                        HOPE3 Academy
+                    </span>
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>

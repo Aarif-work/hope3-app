@@ -18,20 +18,26 @@ import '../../styles/SuperAdmin.css';
 const AdminSidebar = ({ isOpen, onClose }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const role = localStorage.getItem('userRole') || 'SUPER_ADMIN'; // Default to Super Admin if not set for dev
 
-    const menuItems = [
+    const allMenuItems = [
         { label: 'Dashboard', icon: LayoutDashboard, path: '/super-admin/dashboard' },
         { label: 'Students Management', icon: Users, path: '/super-admin/students' },
         { label: 'Applied Students', icon: ClipboardList, path: '/super-admin/applied' },
-        { label: 'Admins', icon: ShieldCheck, path: '/super-admin/admins' },
+        { label: 'Admins', icon: ShieldCheck, path: '/super-admin/admins', sensitive: true },
         { label: 'Donors', icon: HeartHandshake, path: '/super-admin/donors' },
-        { label: 'Academic Details', icon: GraduationCap, path: '/super-admin/academic' },
+        { label: 'Academic Details', icon: GraduationCap, path: '/super-admin/academic', sensitive: true },
         { label: 'Reports', icon: FileBarChart, path: '/super-admin/reports' },
-        { label: 'Settings', icon: Settings, path: '/super-admin/settings' },
+        { label: 'Settings', icon: Settings, path: '/super-admin/settings', sensitive: true },
     ];
 
+    // Filter menu items based on role
+    const menuItems = role === 'ADMIN'
+        ? allMenuItems.filter(item => !item.sensitive)
+        : allMenuItems;
+
     const handleLogout = () => {
-        // Add logout logic here
+        localStorage.removeItem('userRole');
         navigate('/login');
     };
 
@@ -47,8 +53,21 @@ const AdminSidebar = ({ isOpen, onClose }) => {
 
             <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
-                    <div className="admin-sidebar-logo" onClick={() => handleNavigation('/')} style={{ margin: 0 }}>
-                        <img src={logo} alt="HOPE3" />
+                    <div
+                        className="admin-sidebar-logo"
+                        onClick={() => handleNavigation('/')}
+                        style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+                    >
+                        <img src={logo} alt="HOPE3" style={{ height: '36px' }} />
+                        <span style={{
+                            fontSize: '1.1rem',
+                            fontWeight: 800,
+                            color: '#1e293b',
+                            letterSpacing: '-0.02em',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            HOPE3 Academy
+                        </span>
                     </div>
                     <button className="mobile-close-btn" onClick={onClose} style={{ background: 'none' }}>
                         <X size={24} />

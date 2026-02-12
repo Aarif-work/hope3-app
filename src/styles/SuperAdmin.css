@@ -197,6 +197,30 @@
     scrollbar-color: var(--admin-primary-light) transparent;
 }
 
+/* Ensure AG Grid container allows scrolling */
+.admin-grid-container {
+    width: 100%;
+    overflow-x: auto;
+    /* Important for mobile scroll */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Force AG Grid to have a minimum width to trigger scroll on small screens */
+.admin-grid-container .ag-root-wrapper {
+    min-width: 800px;
+    /* Adjust based on your table needs */
+}
+
+@media (max-width: 768px) {
+    .admin-grid-container {
+        border-radius: 0;
+        margin: 0 -1rem;
+        width: calc(100% + 2rem);
+        /* Ensure inner content scrolls */
+        display: block;
+    }
+}
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;
