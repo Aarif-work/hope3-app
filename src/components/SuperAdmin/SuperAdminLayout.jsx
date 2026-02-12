@@ -14,17 +14,23 @@ const SuperAdminLayout = ({ children, title, subtitle }) => {
             <AdminSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
             <main className="admin-main">
                 <header className="admin-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', minWidth: 0 }}>
                         <button
                             className="mobile-menu-btn"
                             onClick={() => setIsSidebarOpen(true)}
-                            style={{ background: 'none', color: 'var(--admin-text)' }}
+                            style={{
+                                background: 'white',
+                                border: '1px solid var(--admin-border)',
+                                color: 'var(--admin-text)',
+                                padding: '0.5rem',
+                                borderRadius: '10px'
+                            }}
                         >
-                            <Menu size={24} />
+                            <Menu size={22} />
                         </button>
-                        <div className="admin-title">
-                            <h1>{title}</h1>
-                            <p>{subtitle}</p>
+                        <div className="admin-title" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <h1 style={{ lineHeight: 1.2 }}>{title}</h1>
+                            <p style={{ margin: 0 }}>{subtitle}</p>
                         </div>
                     </div>
                     <div

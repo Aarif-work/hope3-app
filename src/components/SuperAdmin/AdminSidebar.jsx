@@ -56,17 +56,35 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     <div
                         className="admin-sidebar-logo"
                         onClick={() => handleNavigation('/')}
-                        style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+                        style={{
+                            margin: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.85rem',
+                            padding: '0 0.25rem'
+                        }}
                     >
-                        <img src={logo} alt="HOPE3" style={{ height: '36px' }} />
+                        <img
+                            src={logo}
+                            alt="HOPE3"
+                            style={{
+                                height: '38px',
+                                width: 'auto',
+                                objectFit: 'contain',
+                                display: 'block'
+                            }}
+                        />
                         <span style={{
-                            fontSize: '1.1rem',
-                            fontWeight: 800,
+                            fontSize: '1.2rem',
+                            fontWeight: 900,
                             color: '#1e293b',
-                            letterSpacing: '-0.02em',
-                            whiteSpace: 'nowrap'
+                            letterSpacing: '-0.03em',
+                            whiteSpace: 'nowrap',
+                            lineHeight: 1,
+                            display: 'flex',
+                            alignItems: 'baseline'
                         }}>
-                            HOPE3 Academy
+                            HOPE3 <span style={{ color: 'var(--admin-primary)', marginLeft: '0.35rem' }}>Academy</span>
                         </span>
                     </div>
                     <button className="mobile-close-btn" onClick={onClose} style={{ background: 'none' }}>

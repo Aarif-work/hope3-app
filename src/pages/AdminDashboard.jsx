@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 
 import logo from '../assets/hope logo.png';
+import '../styles/SuperAdmin.css';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -55,18 +56,37 @@ const AdminDashboard = () => {
             }}>
                 <div
                     className="nav-logo"
-                    style={{ marginBottom: '3.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}
+                    style={{
+                        marginBottom: '3.5rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.85rem',
+                        cursor: 'pointer',
+                        padding: '0 0.25rem'
+                    }}
                     onClick={() => navigate('/')}
                 >
-                    <img src={logo} alt="HOPE3 Logo" style={{ height: '36px' }} />
+                    <img
+                        src={logo}
+                        alt="HOPE3 Logo"
+                        style={{
+                            height: '38px',
+                            width: 'auto',
+                            objectFit: 'contain',
+                            display: 'block'
+                        }}
+                    />
                     <span style={{
-                        fontSize: '1.1rem',
-                        fontWeight: 800,
+                        fontSize: '1.2rem',
+                        fontWeight: 900,
                         color: '#1e293b',
-                        letterSpacing: '-0.02em',
-                        whiteSpace: 'nowrap'
+                        letterSpacing: '-0.03em',
+                        whiteSpace: 'nowrap',
+                        lineHeight: 1,
+                        display: 'flex',
+                        alignItems: 'baseline'
                     }}>
-                        HOPE3 Academy
+                        HOPE3 <span style={{ color: 'var(--primary)', marginLeft: '0.35rem' }}>Academy</span>
                     </span>
                 </div>
 
@@ -101,17 +121,23 @@ const AdminDashboard = () => {
             {/* Main Content */}
             <main className="admin-main">
                 <header className="admin-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', minWidth: 0, flex: 1 }}>
                         <button
                             className="mobile-menu-btn"
                             onClick={() => setIsSidebarOpen(true)}
-                            style={{ background: 'none', color: 'var(--admin-text)' }}
+                            style={{
+                                background: 'white',
+                                border: '1px solid var(--admin-border)',
+                                color: 'var(--admin-text)',
+                                padding: '0.5rem',
+                                borderRadius: '10px'
+                            }}
                         >
-                            <Menu size={24} />
+                            <Menu size={22} />
                         </button>
-                        <div className="admin-title">
-                            <h1>{activeTab === 'applications' ? 'Admissions' : 'Registry'}</h1>
-                            <p>Managing the heart of HOPE3 Academy</p>
+                        <div className="admin-title" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                            <h1 style={{ lineHeight: 1.2 }}>{activeTab === 'applications' ? 'Admissions' : 'Registry'}</h1>
+                            <p style={{ margin: 0 }}>Managing the heart of HOPE3 Academy</p>
                         </div>
                     </div>
 

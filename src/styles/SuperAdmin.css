@@ -3,9 +3,9 @@
 }
 
 :root {
-    --admin-primary: #2563eb;
-    --admin-primary-dark: #1d4ed8;
-    --admin-primary-light: #eff6ff;
+    --admin-primary: #00d1c1;
+    --admin-primary-dark: #00bfae;
+    --admin-primary-light: #f0fdfc;
     --admin-bg: #f8fafc;
     --admin-sidebar-w: 280px;
     --admin-header-h: 80px;
@@ -85,7 +85,7 @@
 .admin-nav-item.active {
     background-color: var(--admin-primary);
     color: white;
-    box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 10px 15px -3px rgba(0, 209, 193, 0.25);
 }
 
 .admin-sidebar-footer {
