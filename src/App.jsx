@@ -6,6 +6,7 @@ import StudentAdmission from './pages/StudentAdmission';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import DonorDashboard from './pages/DonorDashboard';
+import DonorProfile from './pages/DonorProfile';
 import LoadingScreen from './components/LoadingScreen';
 
 // Super Admin Pages
@@ -17,6 +18,7 @@ import DonorsPage from './pages/SuperAdmin/Donors';
 import AcademicDetails from './pages/SuperAdmin/AcademicDetails';
 import ReportsPage from './pages/SuperAdmin/Reports';
 import SettingsPage from './pages/SuperAdmin/Settings';
+import SuperAdminProfile from './pages/SuperAdmin/Profile';
 
 import './App.css';
 
@@ -40,6 +42,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/donor-dashboard" element={<DonorDashboard />} />
+          <Route path="/donor-profile" element={<DonorProfile />} />
 
           {/* Super Admin Routes */}
           <Route path="/super-admin/dashboard" element={<SuperAdminDashboard />} />
@@ -50,6 +53,7 @@ function App() {
           <Route path="/super-admin/academic" element={<AcademicDetails />} />
           <Route path="/super-admin/reports" element={<ReportsPage />} />
           <Route path="/super-admin/settings" element={<SettingsPage />} />
+          <Route path="/super-admin/profile" element={<SuperAdminProfile />} />
         </Routes>
       )}
     </AnimatePresence>

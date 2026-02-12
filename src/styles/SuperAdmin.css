@@ -1,4 +1,7 @@
-/* Super Admin Dashboard Styles */
+* {
+    box-sizing: border-box;
+}
+
 :root {
     --admin-primary: #2563eb;
     --admin-primary-dark: #1d4ed8;
@@ -95,16 +98,33 @@
     flex: 1;
     margin-left: var(--admin-sidebar-w);
     padding: 3rem 4rem;
-    /* Enhanced padding for better spacing */
     min-width: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--admin-bg);
+    overflow-x: hidden;
+}
+
+@media (max-width: 1024px) {
+    .admin-main {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
 }
 
 .admin-header {
-    height: var(--admin-header-h);
+    height: auto;
+    min-height: var(--admin-header-h);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+}
+
+.admin-title {
+    flex: 1;
+    min-width: 0;
+    /* Important for ellipsis */
 }
 
 .admin-title h1 {
@@ -112,12 +132,18 @@
     font-weight: 700;
     color: var(--admin-text);
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .admin-title p {
     color: var(--admin-text-light);
     font-size: 0.875rem;
     margin-top: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Stats Grid */
@@ -582,4 +608,68 @@
     .admin-header {
         margin-bottom: 1rem;
     }
+}
+
+/* Profile Section Responsive Fixes */
+.profile-text-hide-mobile {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .profile-text-hide-mobile {
+        display: none;
+    }
+
+    .profile-clickable-area {
+        gap: 0 !important;
+        padding: 0.25rem !important;
+    }
+
+    .header-actions-desktop {
+        display: none !important;
+    }
+
+    .admin-main {
+        padding: 1.5rem !important;
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .admin-grid-2-1,
+    .admin-grid-1-2 {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem;
+    }
+}
+
+.profile-clickable-area:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+}
+
+.profile-clickable-area:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    .admin-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .admin-title h1 {
+        font-size: 1.25rem;
+    }
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive table {
+    min-width: 600px;
 }

@@ -46,12 +46,11 @@ const AdminDashboard = () => {
             )}
 
             {/* Sidebar */}
-            <div style={{
+            <div className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`} style={{
                 width: '280px', background: 'white', borderRight: '1px solid #e2e8f0', padding: '2.5rem 1.5rem',
                 display: 'flex', flexDirection: 'column',
                 position: 'fixed', height: '100vh', left: 0, top: 0,
-                transition: 'transform 0.3s ease',
-                transform: `translateX(${isSidebarOpen ? '0' : window.innerWidth <= 1024 ? '-100%' : '0'})`,
+                transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 zIndex: 100
             }}>
                 <div
@@ -100,36 +99,51 @@ const AdminDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div style={{
-                flex: 1,
-                padding: window.innerWidth <= 768 ? '1.5rem' : '3rem 4rem',
-                marginLeft: window.innerWidth <= 1024 ? '0' : '280px',
-                width: '100%'
-            }}>
-                <header style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-                    marginBottom: '3rem', flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-                    gap: window.innerWidth <= 768 ? '1.5rem' : '0'
-                }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '100%' }}>
+            <main className="admin-main">
+                <header className="admin-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', minWidth: 0, flex: 1 }}>
                         <button
-                            className="mobile-toggle"
+                            className="mobile-menu-btn"
                             onClick={() => setIsSidebarOpen(true)}
-                            style={{
-                                display: window.innerWidth <= 1024 ? 'flex' : 'none',
-                                background: 'white', border: '1px solid #e2e8f0', padding: '0.6rem', borderRadius: '10px'
-                            }}
+                            style={{ background: 'none', color: 'var(--admin-text)' }}
                         >
-                            <Menu size={20} />
+                            <Menu size={24} />
                         </button>
-                        <div>
-                            <h1 style={{ fontSize: window.innerWidth <= 768 ? '1.5rem' : '2rem', color: '#111827' }}>{activeTab === 'applications' ? 'Admissions' : 'Registry'}</h1>
-                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Managing the heart of HOPE3 Academy</p>
+                        <div className="admin-title">
+                            <h1>{activeTab === 'applications' ? 'Admissions' : 'Registry'}</h1>
+                            <p>Managing the heart of HOPE3 Academy</p>
                         </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '1rem', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
-                        <button className="btn-pill" style={{ background: 'white', border: '1px solid #e2e8f0', flex: window.innerWidth <= 768 ? 1 : 'none' }}>Export</button>
-                        <button className="btn-pill btn-primary" style={{ flex: window.innerWidth <= 768 ? 1 : 'none' }}>+ Add New</button>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <div className="header-actions-desktop" style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button className="admin-btn admin-btn-outline">Export</button>
+                            <button className="admin-btn admin-btn-primary">+ Add New</button>
+                        </div>
+
+                        <div
+                            className="admin-user-profile profile-clickable-area"
+                            onClick={() => navigate('/super-admin/profile')}
+                        >
+                            <div className="profile-text-hide-mobile" style={{ textAlign: 'right' }}>
+                                <p style={{ fontWeight: 600, fontSize: '0.875rem', margin: 0 }}>Admin</p>
+                                <p style={{ color: 'var(--admin-text-light)', fontSize: '0.75rem', margin: 0 }}>System Access</p>
+                            </div>
+                            <div style={{
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '50%',
+                                background: 'var(--admin-primary)',
+                                color: 'white',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 700,
+                                fontSize: '0.8rem'
+                            }}>
+                                AD
+                            </div>
+                        </div>
                     </div>
                 </header>
 
@@ -188,11 +202,11 @@ const AdminDashboard = () => {
                         </table>
                     </div>
                 </div>
-            </div>
+            </main>
 
             <style jsx>{`
                 @media (max-width: 1024px) {
-                    .admin-dashboard-root > div:nth-child(2) {
+                    .admin-dashboard-root > .admin-main {
                         transform: translateX(${isSidebarOpen ? '0' : '-100%'}) !important;
                     }
                 }

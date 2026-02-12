@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import { Menu, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/SuperAdmin.css';
 
 const SuperAdminLayout = ({ children, title, subtitle }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const navigate = useNavigate();
+    const role = localStorage.getItem('userRole') || 'SUPER_ADMIN';
 
     return (
         <div className="admin-layout">
@@ -24,23 +27,36 @@ const SuperAdminLayout = ({ children, title, subtitle }) => {
                             <p>{subtitle}</p>
                         </div>
                     </div>
-                    <div className="admin-user-profile" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <div style={{ textAlign: 'right' }}>
-                            <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>Super Admin</p>
+                    <div
+                        className="admin-user-profile profile-clickable-area"
+                        onClick={() => navigate('/super-admin/profile')}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            cursor: 'pointer',
+                            padding: '0.4rem',
+                            borderRadius: '12px',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        <div className="profile-text-hide-mobile" style={{ textAlign: 'right' }}>
+                            <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{role === 'SUPER_ADMIN' ? 'Super Admin' : 'Admin'}</p>
                             <p style={{ color: 'var(--admin-text-light)', fontSize: '0.75rem' }}>System Access</p>
                         </div>
                         <div style={{
-                            width: '40px',
-                            height: '40px',
+                            width: '36px',
+                            height: '36px',
                             borderRadius: '50%',
                             background: 'var(--admin-primary)',
                             color: 'white',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontWeight: 700
+                            fontWeight: 700,
+                            fontSize: '0.8rem'
                         }}>
-                            SA
+                            {role === 'SUPER_ADMIN' ? 'SA' : 'AD'}
                         </div>
                     </div>
                 </header>
