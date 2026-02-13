@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Mail, ArrowRight, Home, ChevronLeft } from 'lucide-react';
-import logo from '../assets/hope logo.png';
-import loginBg from '../assets/login-bg.png';
-import loginVideo from '../assets/login-page-video.mp4';
+import logo from '@/assets/hope logo.png';
+import loginBg from '@/assets/login-bg.png';
+import loginVideo from '@/assets/login-page-video.mp4';
 
 const Login = () => {
   const navigate = useNavigate();

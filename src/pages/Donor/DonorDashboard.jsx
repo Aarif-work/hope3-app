@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import DonorLayout from '../components/Donor/DonorLayout';
+import DonorLayout from '@/components/Donor/DonorLayout';
 
-// Import Modular Components
-import Overview from './Donor/Overview';
-import OurImpact from './Donor/OurImpact';
-import DonationHistory from './Donor/DonationHistory';
-import StudentManagement from './Donor/StudentManagement';
-import Support from './Donor/Support';
+// Import Modular Components from the same directory
+import Overview from './Overview';
+import OurImpact from './OurImpact';
+import DonationHistory from './DonationHistory';
+import StudentManagement from './StudentManagement';
+import Support from './Support';
 
 const DonorDashboard = () => {
     const location = useLocation();

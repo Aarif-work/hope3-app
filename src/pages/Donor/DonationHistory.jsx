@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Download, Calendar, DollarSign, CreditCard } from 'lucide-react';
-import DonorTable from '../../components/Donor/DonorTable';
+import DonorTable from '@/components/Donor/DonorTable';
 
 const DonationHistory = ({ history }) => {
     const colDefs = useMemo(() => [

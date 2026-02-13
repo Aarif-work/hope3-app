@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import confetti from 'canvas-confetti';
+import { validateAdmissionStep } from '@/utils/validation';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import logo from '../assets/hope logo.png';
+import logo from '@/assets/hope logo.png';
 
 // --- Pure UI Components (Defined Outside to Prevent Focus Loss) ---
 
@@ -432,142 +433,7 @@ const StudentAdmission = () => {
     };
 
     const validateStep = (currentStep) => {
-        const newErrors = {};
-
-        // Helper: Validate Required
-        const checkRequired = (fields) => {
-            fields.forEach(f => {
-                if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) {
-                    newErrors[f] = 'This field is required';
-                }
-            });
-        };
-
-        // Helper: Validate Email
-        const checkEmail = (f) => {
-            if (formData[f] && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData[f])) {
-                newErrors[f] = 'Invalid email format';
-            }
-        };
-
-        // Helper: Validate Mobile (10 digits)
-        const checkMobile = (fields) => {
-            fields.forEach(f => {
-                if (formData[f] && !/^\d{10}$/.test(formData[f])) {
-                    newErrors[f] = 'Mobile number must be 10 digits';
-                }
-            });
-        };
-
-        // Helper: Validate Pincode (6 digits)
-        const checkPincode = (f) => {
-            if (formData[f] && !/^\d{6}$/.test(formData[f])) {
-                newErrors[f] = 'Pincode must be 6 digits';
-            }
-        };
-
-        // Helper: Validate Marks (0-100)
-        const checkMarks = (fields) => {
-            fields.forEach(f => {
-                if (formData[f] !== '' && (formData[f] < 0 || formData[f] > 100)) {
-                    newErrors[f] = 'Marks must be 0-100';
-                }
-            });
-        };
-
-        if (currentStep === 1) {
-            checkRequired(['firstName', 'lastName', 'dob', 'homeAddress', 'pincode', 'studentMobile', 'gender', 'district', 'physicallyChallenged', 'livingWith', 'homeRegionType', 'courseToStudy', 'ambitionChoice1', 'ambitionChoice2', 'isFirstGraduate', 'knowledgeSource']);
-            checkEmail('email');
-            checkMobile(['studentMobile', 'studentMobileAlt']);
-            checkPincode('pincode');
-
-            if (formData.ambitionChoice1 && formData.ambitionChoice1 === formData.ambitionChoice2) {
-                newErrors.ambitionChoice2 = 'Choices 1 and 2 must be different';
-            }
-        }
-
-        if (currentStep === 2) {
-            checkRequired(['relativeName', 'relationshipType', 'relativeMobile', 'familyMembersCount', 'familyIncomeMonthly']);
-            checkEmail('relativeEmail');
-            checkMobile(['relativeMobile']);
-        }
-
-        if (currentStep === 3) {
-            checkRequired(['tenthSchoolName', 'tenthSchoolLocation', 'tenthRegistrationNumber', 'tenthDistrictStudied', 'tenthSchoolRegionType', 'tenthSchoolType', 'tenthYearPassed', 'tenthCourseCompleted', 'tenthSubject1Marks', 'tenthSubject2Marks', 'tenthSubject3Marks', 'tenthSubject4Marks', 'tenthSubject5Marks', 'tenthTotalMarks']);
-            checkMarks(['tenthSubject1Marks', 'tenthSubject2Marks', 'tenthSubject3Marks', 'tenthSubject4Marks', 'tenthSubject5Marks']);
-
-            // Logic: Total check
-            const sum = [1, 2, 3, 4, 5].reduce((acc, i) => acc + (Number(formData[`tenthSubject${i}Marks`]) || 0), 0);
-            if (formData.tenthTotalMarks && Number(formData.tenthTotalMarks) !== sum) {
-                newErrors.tenthTotalMarks = `Total must be ${sum}`;
-            }
-        }
-
-        if (currentStep === 4 && formData.tenthCourseCompleted === 'Diploma') {
-            checkRequired(['diplomaCollegeName', 'diplomaCollegeLocation', 'diplomaPercentage', 'diplomaDistrictStudied', 'diplomaCollegeRegionType', 'diplomaCourseStudied', 'diplomaYearPassed']);
-            if (formData.diplomaPercentage && (formData.diplomaPercentage < 0 || formData.diplomaPercentage > 100)) {
-                newErrors.diplomaPercentage = 'Percentage must be 0-100';
-            }
-            if (formData.tenthYearPassed && formData.diplomaYearPassed && Number(formData.diplomaYearPassed) <= Number(formData.tenthYearPassed)) {
-                newErrors.diplomaYearPassed = 'Must be after 10th';
-            }
-        }
-
-        if (currentStep === 4 && (formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th')) {
-            checkRequired(['eleventhSchoolName', 'eleventhSchoolLocation', 'eleventhDistrictStudied', 'eleventhSchoolRegionType', 'eleventhSchoolType', 'eleventhYearPassed', 'eleventhSubjects', 'eleventhSubject1Marks', 'eleventhSubject2Marks']);
-            checkMarks(['eleventhSubject1Marks', 'eleventhSubject2Marks']);
-
-            if (formData.tenthYearPassed && formData.eleventhYearPassed && Number(formData.eleventhYearPassed) <= Number(formData.tenthYearPassed)) {
-                newErrors.eleventhYearPassed = 'Must be after 10th';
-            }
-
-            if (formData.eleventhSubjects) {
-                const majors = getMajorSubjectList(formData.eleventhSubjects);
-                majors.forEach(m => {
-                    const key = getSubjectKey('eleventh', m);
-                    if (!formData[key]) newErrors[key] = 'Required';
-                    else if (formData[key] < 0 || formData[key] > 100) newErrors[key] = '0-100';
-                });
-
-                // Total Check for 11th: 2 languages + 4 majors
-                const sum = (Number(formData.eleventhSubject1Marks) || 0) + (Number(formData.eleventhSubject2Marks) || 0) +
-                    majors.reduce((acc, m) => acc + (Number(formData[getSubjectKey('eleventh', m)]) || 0), 0);
-
-                if (!formData.eleventhTotalMarks) newErrors.eleventhTotalMarks = 'Required';
-                else if (Number(formData.eleventhTotalMarks) !== sum) newErrors.eleventhTotalMarks = `Total must be ${sum}`;
-            }
-        }
-
-        if (currentStep === 5 && formData.tenthCourseCompleted === '12th') {
-            checkRequired(['twelfthSchoolName', 'twelfthSchoolLocation', 'twelfthDistrictStudied', 'twelfthSchoolRegionType', 'twelfthSchoolType', 'twelfthYearPassed', 'twelfthSubjects', 'twelfthSubject1Marks', 'twelfthSubject2Marks']);
-            checkMarks(['twelfthSubject1Marks', 'twelfthSubject2Marks']);
-
-            if (formData.eleventhYearPassed && formData.twelfthYearPassed && Number(formData.twelfthYearPassed) <= Number(formData.eleventhYearPassed)) {
-                newErrors.twelfthYearPassed = 'Must be after 11th';
-            }
-
-            if (formData.twelfthSubjects) {
-                const majors = getMajorSubjectList(formData.twelfthSubjects);
-                majors.forEach(m => {
-                    const key = getSubjectKey('twelfth', m);
-                    if (!formData[key]) newErrors[key] = 'Required';
-                    else if (formData[key] < 0 || formData[key] > 100) newErrors[key] = '0-100';
-                });
-
-                // Total Check for 12th: 2 languages + 4 majors
-                const sum = (Number(formData.twelfthSubject1Marks) || 0) + (Number(formData.twelfthSubject2Marks) || 0) +
-                    majors.reduce((acc, m) => acc + (Number(formData[getSubjectKey('twelfth', m)]) || 0), 0);
-
-                if (!formData.twelfthTotalMarks) newErrors.twelfthTotalMarks = 'Required';
-                else if (Number(formData.twelfthTotalMarks) !== sum) newErrors.twelfthTotalMarks = `Total must be ${sum}`;
-            }
-        }
-
-        // Step 6 is the confirmation step - no validation needed, just allow to proceed
-        if (currentStep === 6) {
-            // No validation required for confirmation step
-        }
-
+        const newErrors = validateAdmissionStep(currentStep, formData, { getMajorSubjectList, getSubjectKey });
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -1140,33 +1006,33 @@ const StudentAdmission = () => {
                             )}
 
                             {/* Step 5 for Diploma/11th OR Step 6 for 12th - Final Confirmation */}
-                            {((step === 5 && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th')) || 
-                              (step === 6 && formData.tenthCourseCompleted === '12th')) && (
-                                <motion.div key="completion-step" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                    <h3 className="step-heading">Submit Application</h3>
-                                    <div className="compliance-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', padding: '2.5rem' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                            <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                                            <div>
-                                                <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>English</h4>
-                                                <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
-                                                    Please ensure the information you provided is correct before submitting the form.
-                                                </p>
+                            {((step === 5 && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th')) ||
+                                (step === 6 && formData.tenthCourseCompleted === '12th')) && (
+                                    <motion.div key="completion-step" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
+                                        <h3 className="step-heading">Submit Application</h3>
+                                        <div className="compliance-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', padding: '2.5rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                                                <div>
+                                                    <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>English</h4>
+                                                    <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
+                                                        Please ensure the information you provided is correct before submitting the form.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div style={{ width: '100%', height: '1px', background: 'rgba(0, 209, 193, 0.2)' }}></div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
+                                                <div>
+                                                    <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>Tamil</h4>
+                                                    <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
+                                                        படிவத்தை சமர்ப்பிக்கும் முன் நீங்கள் வழங்கிய தகவல்கள் சரியானவை என்பதை உறுதிப்படுத்தவும்.
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div style={{ width: '100%', height: '1px', background: 'rgba(0, 209, 193, 0.2)' }}></div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                            <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                                            <div>
-                                                <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>Tamil</h4>
-                                                <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
-                                                    படிவத்தை சமர்ப்பிக்கும் முன் நீங்கள் வழங்கிய தகவல்கள் சரியானவை என்பதை உறுதிப்படுத்தவும்.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            )}
+                                    </motion.div>
+                                )}
                         </AnimatePresence>
                         <div className="form-actions-row">
                             {step > 1 && <button type="button" onClick={handlePrev} className="btn-secondary-cln"><ArrowLeft size={18} /> Previous</button>}

@@ -14,8 +14,8 @@ import {
     Menu
 } from 'lucide-react';
 
-import logo from '../assets/hope logo.png';
-import '../styles/SuperAdmin.css';
+import logo from '@/assets/hope logo.png';
+import '@/styles/SuperAdmin.css';
 
 const AdminDashboard = () => {
     const navigate = useNavigate();

@@ -14,10 +14,10 @@ import {
     UserCog
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import logo from '../assets/hope logo.png';
-import groupImg1 from '../assets/group image/group image.png';
-import groupImg2 from '../assets/group image/image.png';
-import groupImg3 from '../assets/group image/image copy.png';
+import logo from '@/assets/hope logo.png';
+import groupImg1 from '@/assets/group image/group image.png';
+import groupImg2 from '@/assets/group image/image.png';
+import groupImg3 from '@/assets/group image/image copy.png';
 
 const LandingPage = () => {
     const navigate = useNavigate();

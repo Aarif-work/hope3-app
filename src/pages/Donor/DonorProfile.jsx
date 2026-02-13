@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
     User,
@@ -13,7 +13,8 @@ import {
     ChevronRight,
     ExternalLink
 } from 'lucide-react';
-import DonorLayout from '../components/Donor/DonorLayout';
+import DonorLayout from '@/components/Donor/DonorLayout';
+import DonorTable from '@/components/Donor/DonorTable';
 
 const DonorProfile = () => {
     // Mock donor data

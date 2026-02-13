@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import LandingPage from './pages/LandingPage';
-import StudentAdmission from './pages/StudentAdmission';
-import Login from './pages/Login';
-import AdminDashboard from './pages/AdminDashboard';
-import DonorDashboard from './pages/DonorDashboard';
-import DonorProfile from './pages/DonorProfile';
-import LoadingScreen from './components/LoadingScreen';
+import LandingPage from '@/pages/Landing/LandingPage';
+import StudentAdmission from '@/pages/Admission/StudentAdmission';
+import Login from '@/pages/Auth/Login';
+import AdminDashboard from '@/pages/Admin/AdminDashboard';
+import DonorDashboard from '@/pages/Donor/DonorDashboard';
+import DonorProfile from '@/pages/Donor/DonorProfile';
+import LoadingScreen from '@/components/LoadingScreen';
 
 // Super Admin Pages
-import SuperAdminDashboard from './pages/SuperAdmin/Dashboard';
-import StudentManagement from './pages/SuperAdmin/StudentManagement';
-import AppliedStudents from './pages/SuperAdmin/AppliedStudents';
-import AdminsPage from './pages/SuperAdmin/Admins';
-import DonorsPage from './pages/SuperAdmin/Donors';
-import AcademicDetails from './pages/SuperAdmin/AcademicDetails';
-import ReportsPage from './pages/SuperAdmin/Reports';
-import SettingsPage from './pages/SuperAdmin/Settings';
-import SuperAdminProfile from './pages/SuperAdmin/Profile';
+import SuperAdminDashboard from '@/pages/SuperAdmin/Dashboard';
+import StudentManagement from '@/pages/SuperAdmin/StudentManagement';
+import AppliedStudents from '@/pages/SuperAdmin/AppliedStudents';
+import AdminsPage from '@/pages/SuperAdmin/Admins';
+import DonorsPage from '@/pages/SuperAdmin/Donors';
+import AcademicDetails from '@/pages/SuperAdmin/AcademicDetails';
+import ReportsPage from '@/pages/SuperAdmin/Reports';
+import SettingsPage from '@/pages/SuperAdmin/Settings';
+import SuperAdminProfile from '@/pages/SuperAdmin/Profile';
 
 import './App.css';
 

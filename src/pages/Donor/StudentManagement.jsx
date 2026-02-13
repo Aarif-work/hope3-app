@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Eye, Filter, User, GraduationCap } from 'lucide-react';
-import DonorTable from '../../components/Donor/DonorTable';
+import DonorTable from '@/components/Donor/DonorTable';
 
 const StudentManagement = () => {
     const [searchTerm, setSearchTerm] = useState('');
