@@ -141,6 +141,7 @@ const StudentAdmission = () => {
 
     const [step, setStep] = useState(1);
     const [submitted, setSubmitted] = useState(false);
+    const [showConfirmation, setShowConfirmation] = useState(false);
     const [applicationId, setApplicationId] = useState('');
     const [copying, setCopying] = useState(false);
     const [errors, setErrors] = useState({});
@@ -445,9 +446,9 @@ const StudentAdmission = () => {
     // Step 4: Diploma/11th/12th Details
     // Step 5: 12th Details (only if 12th selected) OR Confirmation (if Diploma/11th)
     // Step 6: Confirmation (only if 12th selected)
-    const totalSteps = formData.tenthCourseCompleted === 'Diploma' ? 5 :
-        formData.tenthCourseCompleted === '11th' ? 5 :
-            formData.tenthCourseCompleted === '12th' ? 6 : 5;
+    const totalSteps = formData.tenthCourseCompleted === 'Diploma' ? 4 :
+        formData.tenthCourseCompleted === '11th' ? 4 :
+            formData.tenthCourseCompleted === '12th' ? 5 : 4;
 
     const handleNext = () => {
         if (validateStep(step)) {
@@ -463,236 +464,43 @@ const StudentAdmission = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateStep(step)) {
-            const id = `HOPE3-2026-${Math.floor(Math.random() * 900) + 100}`;
-            setApplicationId(id);
-            setSubmitted(true);
+            if (step < totalSteps) {
+                // If not on final step, just go to next step (prevents accidental submission via Enter key)
+                handleNext();
+            } else {
+                // Show confirmation modal
+                setShowConfirmation(true);
+            }
         }
+    };
+
+    const handleFinalSubmit = () => {
+        // Final submission - generate application ID and show success page
+        const id = `HOPE3-2026-${Math.floor(Math.random() * 900) + 100}`;
+        setApplicationId(id);
+        setShowConfirmation(false);
+        setSubmitted(true);
     };
 
     if (submitted) {
         return (
             <div className="admission-full-page celebration-bg">
-                {/* Print Only Area */}
-                <div className="printable-application">
-                    <div className="print-header">
-                        <img src={logo} alt="HOPE3 Logo" className="print-logo" />
-                        <div className="print-header-text">
-                            <h1>HOPE3 ACADEMY</h1>
-                            <p>Official Student Enrollment Record - 2026</p>
-                        </div>
-                        <div className="print-id-badge">
-                            <span className="p-label">APPLICATION ID</span>
-                            <span className="p-value">{applicationId}</span>
-                        </div>
-                    </div>
-
-                    <div className="print-content-grid">
-                        <div className="print-section">
-                            <h3 className="section-divider">Student Details</h3>
-                            <div className="p-row"><span>First Name:</span> <strong>{formData.firstName}</strong></div>
-                            <div className="p-row"><span>Initial / Last Name:</span> <strong>{formData.lastName}</strong></div>
-                            <div className="p-row"><span>Date of Birth:</span> <strong>{formData.dob}</strong></div>
-                            <div className="p-row"><span>Home Address:</span> <strong>{formData.homeAddress}</strong></div>
-                            <div className="p-row"><span>Pincode:</span> <strong>{formData.pincode}</strong></div>
-                            <div className="p-row"><span>Mobile Number:</span> <strong>{formData.studentMobile}</strong></div>
-                            <div className="p-row"><span>Alternate Mobile:</span> <strong>{formData.studentMobileAlt}</strong></div>
-                            <div className="p-row"><span>Email:</span> <strong>{formData.email}</strong></div>
-                            <div className="p-row"><span>Gender:</span> <strong>{formData.gender}</strong></div>
-                            <div className="p-row"><span>District:</span> <strong>{formData.district}</strong></div>
-                        </div>
-                    </div>
-
-                    <div className="print-section">
-                        <h3 className="section-divider">Educational & Ambition</h3>
-                        <div className="p-row"><span>Course Desired:</span> <strong>{formData.courseToStudy}</strong></div>
-                        <div className="p-row"><span>Ambition 1:</span> <strong>{formData.ambitionChoice1}</strong></div>
-                        <div className="p-row"><span>Ambition 2:</span> <strong>{formData.ambitionChoice2}</strong></div>
-                        <div className="p-row"><span>First Graduate:</span> <strong>{formData.isFirstGraduate}</strong></div>
-                        <div className="p-row"><span>Region Type:</span> <strong>{formData.homeRegionType}</strong></div>
-                    </div>
-
-                    <div className="print-section">
-                        <h3 className="section-divider">Relative's Information</h3>
-                        <div className="p-row"><span>Relative Name:</span> <strong>{formData.relativeName}</strong></div>
-                        <div className="p-row"><span>Relationship:</span> <strong>{formData.relationshipType}</strong></div>
-                        <div className="p-row"><span>Occupation:</span> <strong>{formData.relativeOccupation}</strong></div>
-                        <div className="p-row"><span>Mobile:</span> <strong>{formData.relativeMobile}</strong></div>
-                        <div className="p-row"><span>Email ID:</span> <strong>{formData.relativeEmail}</strong></div>
-                        <div className="p-row"><span>Education:</span> <strong>{formData.relativeEducation}</strong></div>
-                        <div className="p-row"><span>Family Members:</span> <strong>{formData.familyMembersCount}</strong></div>
-                        <div className="p-row"><span>Monthly Income:</span> <strong>{formData.familyIncomeMonthly}</strong></div>
-                    </div>
-
-                    <div className="print-section">
-                        <h3 className="section-divider">10th Education Details</h3>
-                        <div className="p-row"><span>School Name:</span> <strong>{formData.tenthSchoolName}</strong></div>
-                        <div className="p-row"><span>School Location:</span> <strong>{formData.tenthSchoolLocation}</strong></div>
-                        <div className="p-row"><span>Registration Number:</span> <strong>{formData.tenthRegistrationNumber}</strong></div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>District Studied:</span> <strong>{formData.tenthDistrictStudied}</strong></div>
-                            <div className="p-row"><span>School Region:</span> <strong>{formData.tenthSchoolRegionType}</strong></div>
-                        </div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>School Type:</span> <strong>{formData.tenthSchoolType}</strong></div>
-                            <div className="p-row"><span>Year Passed:</span> <strong>{formData.tenthYearPassed}</strong></div>
-                        </div>
-                        <div className="p-row"><span>Course Completed:</span> <strong>{formData.tenthCourseCompleted}</strong></div>
-                        <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Subject Marks</h4>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Language:</span> <strong>{formData.tenthSubject1Marks}</strong></div>
-                            <div className="p-row"><span>English:</span> <strong>{formData.tenthSubject2Marks}</strong></div>
-                        </div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Mathematics:</span> <strong>{formData.tenthSubject3Marks}</strong></div>
-                            <div className="p-row"><span>Science:</span> <strong>{formData.tenthSubject4Marks}</strong></div>
-                        </div>
-                        <div className="p-grid">
-                            <div className="p-row"><span>Social Science:</span> <strong>{formData.tenthSubject5Marks}</strong></div>
-                            <div className="p-row"><span>Total Marks:</span> <strong>{formData.tenthTotalMarks}</strong></div>
-                        </div>
-                    </div>
-
-                    {formData.tenthCourseCompleted === 'Diploma' && (
-                        <div className="print-section">
-                            <h3 className="section-divider">Diploma Details</h3>
-                            <div className="p-row"><span>College Name:</span> <strong>{formData.diplomaCollegeName}</strong></div>
-                            <div className="p-row"><span>College Location:</span> <strong>{formData.diplomaCollegeLocation}</strong></div>
-                            <div className="p-grid">
-                                <div className="p-row"><span>Percentage:</span> <strong>{formData.diplomaPercentage}%</strong></div>
-                                <div className="p-row"><span>District Studied:</span> <strong>{formData.diplomaDistrictStudied}</strong></div>
-                            </div>
-                            <div className="p-grid">
-                                <div className="p-row"><span>College Region:</span> <strong>{formData.diplomaCollegeRegionType}</strong></div>
-                                <div className="p-row"><span>Course Studied:</span> <strong>{formData.diplomaCourseStudied}</strong></div>
-                            </div>
-                            <div className="p-row"><span>Year Passed:</span> <strong>{formData.diplomaYearPassed}</strong></div>
-                        </div>
-                    )}
-
-                    {(formData.tenthCourseCompleted === '11th' || formData.tenthCourseCompleted === '12th') && (
-                        <div className="print-section">
-                            <h3 className="section-divider">11th Education Details</h3>
-                            <div className="p-row"><span>School Name:</span> <strong>{formData.eleventhSchoolName}</strong></div>
-                            <div className="p-row"><span>School Location:</span> <strong>{formData.eleventhSchoolLocation}</strong></div>
-                            <div className="p-row"><span>Registration Number:</span> <strong>{formData.eleventhRegistrationNumber}</strong></div>
-                            <div className="p-grid">
-                                <div className="p-row"><span>District Studied:</span> <strong>{formData.eleventhDistrictStudied}</strong></div>
-                                <div className="p-row"><span>School Region:</span> <strong>{formData.eleventhSchoolRegionType}</strong></div>
-                            </div>
-                            <div className="p-grid">
-                                <div className="p-row"><span>School Type:</span> <strong>{formData.eleventhSchoolType}</strong></div>
-                                <div className="p-row"><span>Year Passed:</span> <strong>{formData.eleventhYearPassed}</strong></div>
-                            </div>
-                            <div className="p-row"><span>Subjects:</span> <strong>{formData.eleventhSubjects}</strong></div>
-                            <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Subject Marks & Cutoffs</h4>
-                            <div className="p-grid">
-                                <div className="p-row"><span>Tamil/Language:</span> <strong>{formData.eleventhSubject1Marks}</strong></div>
-                                <div className="p-row"><span>English:</span> <strong>{formData.eleventhSubject2Marks}</strong></div>
-                            </div>
-                            {(formData.eleventhEngineeringCutoff || formData.eleventhNeetScore || formData.eleventhAgriCutoff) && (
-                                <div className="p-grid">
-                                    {formData.eleventhEngineeringCutoff && <div className="p-row"><span>Engineering Cutoff:</span> <strong>{formData.eleventhEngineeringCutoff}</strong></div>}
-                                    {formData.eleventhNeetScore && <div className="p-row"><span>NEET Score:</span> <strong>{formData.eleventhNeetScore}</strong></div>}
-                                    {formData.eleventhAgriCutoff && <div className="p-row"><span>Agri Cutoff:</span> <strong>{formData.eleventhAgriCutoff}</strong></div>}
-                                </div>
-                            )}
-                            {(formData.eleventhMathematicsMarks || formData.eleventhTotalMarks) && (
-                                <>
-                                    <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Major Subject Marks</h4>
-                                    <div className="p-grid">
-                                        <div className="p-row"><span>Mathematics:</span> <strong>{formData.eleventhMathematicsMarks}</strong></div>
-                                        <div className="p-row"><span>Physics:</span> <strong>{formData.eleventhPhysicsMarks}</strong></div>
-                                    </div>
-                                    <div className="p-grid">
-                                        <div className="p-row"><span>Chemistry:</span> <strong>{formData.eleventhChemistryMarks}</strong></div>
-                                        <div className="p-row"><span>{formData.eleventhBiologyMarks ? 'Biology' : 'Statistics'}:</span> <strong>{formData.eleventhBiologyMarks || formData.eleventhStatisticsMarks}</strong></div>
-                                    </div>
-                                    <div className="p-row"><span>Total Marks:</span> <strong>{formData.eleventhTotalMarks}</strong></div>
-                                </>
-                            )}
-                        </div>
-                    )}
-
-                    {formData.tenthCourseCompleted === '12th' && (
-                        <div className="print-section">
-                            <h3 className="section-divider">12th Education Details</h3>
-                            <div className="p-row"><span>School Name:</span> <strong>{formData.twelfthSchoolName}</strong></div>
-                            <div className="p-row"><span>School Location:</span> <strong>{formData.twelfthSchoolLocation}</strong></div>
-                            <div className="p-row"><span>Registration Number:</span> <strong>{formData.twelfthRegistrationNumber}</strong></div>
-                            <div className="p-grid">
-                                <div className="p-row"><span>District Studied:</span> <strong>{formData.twelfthDistrictStudied}</strong></div>
-                                <div className="p-row"><span>School Region:</span> <strong>{formData.twelfthSchoolRegionType}</strong></div>
-                            </div>
-                            <div className="p-grid">
-                                <div className="p-row"><span>School Type:</span> <strong>{formData.twelfthSchoolType}</strong></div>
-                                <div className="p-row"><span>Year Passed:</span> <strong>{formData.twelfthYearPassed}</strong></div>
-                            </div>
-                            <div className="p-row"><span>Subjects:</span> <strong>{formData.twelfthSubjects}</strong></div>
-                            <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Subject Marks & Cutoffs</h4>
-                            <div className="p-grid">
-                                <div className="p-row"><span>Tamil/Language:</span> <strong>{formData.twelfthSubject1Marks}</strong></div>
-                                <div className="p-row"><span>English:</span> <strong>{formData.twelfthSubject2Marks}</strong></div>
-                            </div>
-                            {(formData.twelfthEngineeringCutoff || formData.twelfthNeetScore || formData.twelfthAgriCutoff) && (
-                                <div className="p-grid">
-                                    {formData.twelfthEngineeringCutoff && <div className="p-row"><span>Engineering Cutoff:</span> <strong>{formData.twelfthEngineeringCutoff}</strong></div>}
-                                    {formData.twelfthNeetScore && <div className="p-row"><span>NEET Score:</span> <strong>{formData.twelfthNeetScore}</strong></div>}
-                                    {formData.twelfthAgriCutoff && <div className="p-row"><span>Agri Cutoff:</span> <strong>{formData.twelfthAgriCutoff}</strong></div>}
-                                </div>
-                            )}
-                            {(formData.twelfthMathematicsMarks || formData.twelfthCommerceMarks) && (
-                                <>
-                                    <h4 style={{ fontSize: '12px', marginTop: '15px', marginBottom: '10px', color: '#64748b' }}>Major Subject Marks</h4>
-                                    {formData.twelfthCommerceMarks && (
-                                        <>
-                                            <div className="p-grid">
-                                                <div className="p-row"><span>Commerce:</span> <strong>{formData.twelfthCommerceMarks}</strong></div>
-                                                <div className="p-row"><span>Economics:</span> <strong>{formData.twelfthEconomicsMarks}</strong></div>
-                                            </div>
-                                            <div className="p-grid">
-                                                <div className="p-row"><span>Accountancy:</span> <strong>{formData.twelfthAccountancyMarks}</strong></div>
-                                                <div className="p-row"><span>Statistics:</span> <strong>{formData.twelfthStatisticsMarks}</strong></div>
-                                            </div>
-                                        </>
-                                    )}
-                                    {formData.twelfthMathematicsMarks && (
-                                        <div className="p-grid">
-                                            <div className="p-row"><span>Mathematics:</span> <strong>{formData.twelfthMathematicsMarks}</strong></div>
-                                            <div className="p-row"><span>Physics:</span> <strong>{formData.twelfthPhysicsMarks}</strong></div>
-                                            <div className="p-row"><span>Chemistry:</span> <strong>{formData.twelfthChemistryMarks}</strong></div>
-                                            <div className="p-row"><span>{formData.twelfthBiologyMarks ? 'Biology' : 'Statistics'}:</span> <strong>{formData.twelfthBiologyMarks || formData.twelfthStatisticsMarks}</strong></div>
-                                        </div>
-                                    )}
-                                    <div className="p-row"><span>Total Marks:</span> <strong>{formData.twelfthTotalMarks}</strong></div>
-                                </>
-                            )}
-                        </div>
-                    )}
-
-                    <div className="print-footer">
-                        <div className="signature-box">
-                            <div className="sig-line"></div>
-                            <p>Student Signature</p>
-                        </div>
-                        <div className="signature-box">
-                            <div className="sig-line"></div>
-                            <p>Registrar Seal</p>
-                        </div>
-                    </div>
-                </div>
-
                 <div className="bg-container">
                     <div className="organic-blob blob-celebrate-1"></div>
                     <div className="organic-blob blob-celebrate-2"></div>
                 </div>
+
+                <div
+                    className="back-btn-absolute"
+                    onClick={() => navigate('/')}
+                    title="Back to Home"
+                >
+                    <ArrowLeft size={24} />
+                </div>
+
                 <div className="app-container central-form-view">
                     <motion.div initial={{ opacity: 0, y: 40, scale: 0.9 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="success-card-premium">
-                        <div className="success-header">
-                            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', delay: 0.3 }} className="check-ring">
-                                <CheckCircle size={64} className="check-icon-main" />
-                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }} className="ring-glow"></motion.div>
-                            </motion.div>
-                        </div>
+
                         <div className="success-content">
                             <h1 className="premium-success-title">Application Submitted!</h1>
                             <p className="premium-success-subtitle">Thank you for applying for the Hope3 Scholarship. Your application has been received and is under review.</p>
@@ -704,13 +512,10 @@ const StudentAdmission = () => {
                                         {copying ? <CheckCircle size={18} /> : <Copy size={18} />}
                                     </button>
                                 </div>
-                                <div className="id-footer">
-                                    <ShieldCheck size={14} /> <span>Blockchain Verified Record</span>
-                                </div>
+
                             </div>
                             <div className="success-actions">
-                                <button className="success-btn btn-print" onClick={() => window.print()}><Printer size={18} /> Print Application</button>
-                                <button className="success-btn btn-home" onClick={() => navigate('/')}><ArrowLeft size={18} /> Home Dashboard</button>
+                                <button className="success-btn btn-home" onClick={() => navigate('/')}><Home size={18} /> Back to Home</button>
                             </div>
                         </div>
                     </motion.div>
@@ -1004,35 +809,6 @@ const StudentAdmission = () => {
                                     </div>
                                 </motion.div>
                             )}
-
-                            {/* Step 5 for Diploma/11th OR Step 6 for 12th - Final Confirmation */}
-                            {((step === 5 && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th')) ||
-                                (step === 6 && formData.tenthCourseCompleted === '12th')) && (
-                                    <motion.div key="completion-step" initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }}>
-                                        <h3 className="step-heading">Submit Application</h3>
-                                        <div className="compliance-box" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '1.5rem', padding: '2.5rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                                                <div>
-                                                    <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>English</h4>
-                                                    <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
-                                                        Please ensure the information you provided is correct before submitting the form.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <div style={{ width: '100%', height: '1px', background: 'rgba(0, 209, 193, 0.2)' }}></div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                <ShieldCheck size={32} style={{ color: 'var(--primary)', flexShrink: 0 }} />
-                                                <div>
-                                                    <h4 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>Tamil</h4>
-                                                    <p style={{ fontSize: '1rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.8', margin: 0 }}>
-                                                        படிவத்தை சமர்ப்பிக்கும் முன் நீங்கள் வழங்கிய தகவல்கள் சரியானவை என்பதை உறுதிப்படுத்தவும்.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
                         </AnimatePresence>
                         <div className="form-actions-row">
                             {step > 1 && <button type="button" onClick={handlePrev} className="btn-secondary-cln"><ArrowLeft size={18} /> Previous</button>}
@@ -1044,9 +820,63 @@ const StudentAdmission = () => {
                         </div>
                     </form>
                 </div>
+
+                {/* Confirmation Modal */}
+                <AnimatePresence>
+                    {showConfirmation && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="modal-overlay"
+                            onClick={() => setShowConfirmation(false)}
+                        >
+                            <motion.div
+                                initial={{ scale: 0.9, y: 20 }}
+                                animate={{ scale: 1, y: 0 }}
+                                exit={{ scale: 0.9, y: 20 }}
+                                className="modal-content"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <h3 className="step-heading" style={{ marginBottom: '1rem', textAlign: 'center' }}>Confirm Submission</h3>
+                                <div className="compliance-box" style={{ flexDirection: 'column', alignItems: 'center', gap: '1rem', padding: '1.5rem', background: 'white', border: 'none' }}>
+                                    <div style={{ background: 'rgba(0, 209, 193, 0.1)', padding: '0.8rem', borderRadius: '50%', marginBottom: '0.2rem' }}>
+                                        <ShieldCheck size={28} style={{ color: 'var(--primary)' }} />
+                                    </div>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <p style={{ fontSize: '1rem', color: '#1e293b', fontWeight: '700', lineHeight: '1.5', margin: '0 0 0.8rem 0' }}>
+                                            Please ensure the information you provided is correct before submitting the form.
+                                        </p>
+                                        <p style={{ fontSize: '0.9rem', color: '#0d9488', fontWeight: '600', lineHeight: '1.5', margin: 0 }}>
+                                            படிவத்தை சமர்ப்பிக்கும் முன் நீங்கள் வழங்கிய தகவல்கள் சரியானவை என்பதை உறுதிப்படுத்தவும்.
+                                        </p>
+                                    </div>
+
+                                    <div style={{
+                                        marginTop: '0.2rem',
+                                        padding: '0.8rem',
+                                        background: '#f8fafc',
+                                        borderRadius: '12px',
+                                        border: '1px dashed rgba(0, 209, 193, 0.3)',
+                                        width: '100%',
+                                        textAlign: 'center'
+                                    }}>
+                                        <p style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: '600', margin: 0 }}>
+                                            After submission, your unique <span style={{ color: 'var(--primary)', fontWeight: '800' }}>HOPE ID</span> will be generated.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="form-actions-row" style={{ marginTop: '1.5rem', gap: '1rem' }}>
+                                    <button type="button" onClick={() => setShowConfirmation(false)} className="btn-secondary-cln">Cancel</button>
+                                    <button type="button" onClick={handleFinalSubmit} className="btn-primary-cln submit-color">Confirm & Submit</button>
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
             {localStyles}
-        </div>
+        </div >
     );
 };
 
@@ -1186,10 +1016,10 @@ const localStyles = (
         .btn-secondary-cln { flex: 0.8; background: #f8fafc; color: #64748b; border: 1.5px solid #f1f5f9; border-radius: 16px; font-weight: 850; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.6rem; transition: 0.3s; }
         .btn-secondary-cln:hover { background: #f1f5f9; color: #1e293b; }
 
-        .celebration-bg { background: radial-gradient(circle at top left, rgba(0,209,193,0.05) 0%, #fff 50%, rgba(251,191,36,0.05) 100%); }
+        .celebration-bg { background: radial-gradient(circle at top left, rgba(0,209,193,0.05) 0%, #fff 50%, rgba(251,191,36,0.05) 100%); height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .success-card-premium {
             background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08); border-radius: 48px; padding: 4rem 3rem; max-width: 680px; width: 100%; text-align: center; position: relative;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.08); border-radius: 48px; padding: 3rem 2rem; max-width: 680px; width: 100%; text-align: center; position: relative;
         }
         .success-header { position: relative; margin-bottom: 2.5rem; display: flex; justify-content: center; }
         .check-ring { 
@@ -1198,13 +1028,25 @@ const localStyles = (
         }
         .check-icon-main { color: var(--primary); }
         .ring-glow { position: absolute; inset: -10px; border: 2px solid var(--primary); border-radius: 50%; opacity: 0.3; z-index: 1; }
-        .premium-success-title { font-size: 2.8rem; font-weight: 950; color: #111827; margin-bottom: 1rem; letter-spacing: -0.02em; }
-        .premium-success-subtitle { font-size: 1.1rem; color: #64748b; font-weight: 600; line-height: 1.6; max-width: 500px; margin: 0 auto 3rem; }
-        .hope-id-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 32px; padding: 2.5rem; margin-bottom: 3.5rem; position: relative; transition: 0.3s; }
+        .premium-success-title { font-size: 2.5rem; font-weight: 950; color: #111827; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+        .premium-success-subtitle { font-size: 1rem; color: #64748b; font-weight: 600; line-height: 1.5; max-width: 500px; margin: 0 auto 2rem; }
+        .hope-id-box { background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 32px; padding: 2rem; margin-bottom: 2.5rem; position: relative; transition: 0.3s; }
         .hope-id-box:hover { border-color: var(--primary); background: white; }
         .id-meta { display: block; font-size: 0.75rem; font-weight: 900; color: #94a3b8; letter-spacing: 0.15em; margin-bottom: 1rem; }
         .id-value-row { display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 1.5rem; }
         .id-text { font-family: 'Space Mono', monospace; font-size: 1.8rem; font-weight: 900; color: #111827; }
+        .id-copy-btn { 
+            background: #f1f5f9; 
+            border: 2px solid #e2e8f0; 
+            padding: 0.6rem; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            color: #64748b;
+        }
         .error-message-cln { color: #ef4444; font-size: 0.75rem; font-weight: 700; margin-top: 0.5rem; display: block; }
         .error-ring { border-color: #ef4444 !important; }
         .form-group-admission.has-error .field-icon-cln { color: #ef4444; }
@@ -1332,6 +1174,51 @@ const localStyles = (
             .title-cln { font-size: 1.4rem; }
             .step-node { width: 28px; height: 28px; min-width: 28px; }
             .step-connector { width: 15px; min-width: 15px; }
+        }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 32px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+
+        .back-btn-absolute {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100; /* Ensure it is above the blobs */
+            display: flex; align-items: center; justify-content: center;
+            color: #64748b;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .back-btn-absolute:hover {
+            transform: scale(1.1);
+            color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 209, 193, 0.2);
+            background: white;
+        }
+
+        @media (max-width: 768px) {
+            .back-btn-absolute { top: 1.5rem; left: 1.5rem; padding: 0.6rem; }
         }
     `}</style>
 );

@@ -134,5 +134,12 @@ export const validateAdmissionStep = (currentStep, formData, helpers = {}) => {
         }
     }
 
+    // Step 5: Confirmation for Diploma/11th OR Step 6: Confirmation for 12th
+    // No validation needed for confirmation step - just a confirmation page
+    if ((currentStep === 5 && (formData.tenthCourseCompleted === 'Diploma' || formData.tenthCourseCompleted === '11th')) ||
+        (currentStep === 6 && formData.tenthCourseCompleted === '12th')) {
+        // Confirmation step - no validation required, just return empty errors
+    }
+
     return newErrors;
 };
