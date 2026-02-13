@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, Home, ChevronLeft } from 'lucide-react';
+import { Lock, Mail, ArrowRight, Home, ChevronLeft, ShieldCheck, UserCog, Heart } from 'lucide-react';
 import logo from '@/assets/hope logo.png';
 import loginBg from '@/assets/login-bg.png';
 import loginVideo from '@/assets/login-page-video.mp4';
@@ -11,12 +11,43 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const videoRef = useRef(null);
+
+  // Seamless Video Loop Monitoring
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Ensure video stays playing
+    const handlePlay = () => {
+      if (video.paused) {
+        video.play().catch(() => { });
+      }
+    };
+
+    // Robust resume on focus/visibility change
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        handlePlay();
+      }
+    };
+
+    video.play().catch(() => { });
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('focus', handlePlay);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('focus', handlePlay);
+    };
+  }, []);
 
   // Demo credentials for testing
   const demoAccounts = [
-    { role: 'Super Admin', email: 'superadmin@hope3.org', password: 'super123', color: '#ef4444' },
-    { role: 'Admin', email: 'admin@hope3.org', password: 'admin123', color: '#00d1c1' },
-    { role: 'Donor', email: 'donor@hope3.org', password: 'donor123', color: '#fbbf24' }
+    { role: 'Super Admin', email: 'superadmin@hope3.org', password: 'super123', color: '#ef4444', Icon: ShieldCheck },
+    { role: 'Admin', email: 'admin@hope3.org', password: 'admin123', color: '#00d1c1', Icon: UserCog },
+    { role: 'Donor', email: 'donor@hope3.org', password: 'donor123', color: '#fbbf24', Icon: Heart }
   ];
 
   const fillCredentials = (account) => {
@@ -71,10 +102,12 @@ const Login = () => {
         <video
           src={loginVideo}
           autoPlay
-          loop
           muted
+          loop
           playsInline
+          preload="auto"
           className="bg-video"
+          ref={videoRef}
         />
       </div>
 
@@ -97,9 +130,22 @@ const Login = () => {
             <p>Enter your credentials to access your dashboard</p>
           </div>
 
+          <div className="demo-credentials-section">
+            {demoAccounts.map((account, index) => (
+              <div
+                key={account.role}
+                className="demo-account-icon-btn"
+                onClick={() => fillCredentials(account)}
+                title={`${account.role}: ${account.email}`}
+                style={{ '--accent-color': account.color }}
+              >
+                <account.Icon size={24} color={account.color} />
+              </div>
+            ))}
+          </div>
+
           <form onSubmit={handleLogin} className="login-form">
             <div className="form-group">
-              <label>Work Email</label>
               <div className="input-with-icon">
                 <Mail size={18} className="input-icon" />
                 <input
@@ -114,7 +160,6 @@ const Login = () => {
             </div>
 
             <div className="form-group">
-              <label>Password</label>
               <div className="input-with-icon">
                 <Lock size={18} className="input-icon" />
                 <input
@@ -141,20 +186,18 @@ const Login = () => {
                 </>
               )}
             </button>
+
+            <div className="login-divider">
+              <span>OR</span>
+            </div>
+
+            <button type="button" className="google-signin-btn">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+              <span>Continue with Google</span>
+            </button>
           </form>
 
-          {/* Demo Credentials - Text Only */}
-          <div className="demo-credentials-section">
-            {demoAccounts.map((account, index) => (
-              <div
-                key={account.role}
-                className="demo-account-text"
-                onClick={() => fillCredentials(account)}
-              >
-                {account.email} / {account.password}
-              </div>
-            ))}
-          </div>
+
 
           <div className="login-footer">
             <p>Are you a student? <span onClick={() => navigate('/apply')}>Start Application</span></p>
@@ -190,12 +233,18 @@ const Login = () => {
           height: 100%;
           object-fit: cover;
           opacity: 1;
+          z-index: 1;
+        }
+
+        @keyframes slow-zoom {
+          from { transform: scale(1); }
+          to { transform: scale(1.15); }
         }
 
         .illustration-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.2));
+          background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
           z-index: 2;
           padding: 5rem;
           display: flex;
@@ -204,8 +253,8 @@ const Login = () => {
 
         .illustration-content {
           max-width: 500px;
-          color: #1e293b;
-          text-shadow: 0 2px 10px rgba(255,255,255,1);
+          color: white;
+          text-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
         .illustration-tag {
@@ -227,13 +276,13 @@ const Login = () => {
           line-height: 1.1;
           margin-bottom: 1.5rem;
           letter-spacing: -0.04em;
-          color: #111827;
+          color: white;
         }
 
         .illustration-content p {
           font-size: 1.1rem;
           line-height: 1.6;
-          color: #475569;
+          color: rgba(255, 255, 255, 0.9);
           font-weight: 600;
         }
 
@@ -242,7 +291,7 @@ const Login = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 3rem;
+          padding: 1.5rem;
           background: white;
           position: relative;
           z-index: 10;
@@ -269,7 +318,7 @@ const Login = () => {
         }
 
         .login-header {
-          margin-bottom: 2rem;
+          margin-bottom: 1rem;
         }
 
         .back-to-home {
@@ -280,7 +329,7 @@ const Login = () => {
           font-size: 0.9rem;
           font-weight: 600;
           cursor: pointer;
-          margin-bottom: 1.5rem;
+          margin-bottom: 0.8rem;
           transition: var(--transition);
         }
 
@@ -292,7 +341,7 @@ const Login = () => {
           display: flex;
           align-items: center;
           gap: 1rem;
-          margin-bottom: 1.5rem;
+          margin-bottom: 0.8rem;
         }
 
         .login-logo {
@@ -324,7 +373,7 @@ const Login = () => {
         .login-form {
           display: flex;
           flex-direction: column;
-          gap: 1.8rem;
+          gap: 1.2rem;
         }
 
         .form-group {
@@ -467,7 +516,7 @@ const Login = () => {
           gap: 0.8rem;
           transition: all 0.3s ease;
           box-shadow: 0 10px 20px rgba(0, 209, 193, 0.2);
-          margin-top: 1rem;
+          margin-top: 0.5rem;
         }
 
         .login-submit-btn:hover {
@@ -480,32 +529,87 @@ const Login = () => {
           transform: translateY(0);
         }
 
-        }
-
-        /* Demo Credentials - Text Only */
+        /* Demo Credentials - Icons Row */
         .demo-credentials-section {
-          margin-top: 5rem;
+          margin-bottom: 1.2rem;
           display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
+          flex-direction: row;
+          justify-content: center;
+          gap: 1.2rem;
         }
 
-        .demo-account-text {
-          font-size: 0.85rem;
-          font-weight: 600;
+        .demo-account-icon-btn {
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: white;
+          border-radius: 50%;
           cursor: pointer;
-          transition: opacity 0.2s ease;
-          text-align: center;
-          font-family: 'Courier New', monospace;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          border: 1.5px solid #e2e8f0;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .demo-account-text:hover {
-          opacity: 0.7;
-          text-decoration: underline;
+        .demo-account-icon-btn:hover {
+          transform: translateY(-3px) scale(1.1);
+          border-color: var(--accent-color);
+          box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+          background: #fff;
+        }
+
+        .demo-account-icon-btn:active {
+          transform: translateY(-1px) scale(1);
+        }
+
+        .login-divider {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          margin: 0.3rem 0;
+          color: #94a3b8;
+          font-size: 0.8rem;
+          font-weight: 600;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+          content: "";
+          flex: 1;
+          height: 1px;
+          background: #e2e8f0;
+        }
+
+        .google-signin-btn {
+          width: 100%;
+          padding: 1rem;
+          background: white;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          font-weight: 600;
+          color: #475569;
+        }
+
+        .google-signin-btn:hover {
+          background: #f8fafc;
+          border-color: #cbd5e1;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .google-signin-btn img {
+          width: 20px;
+          height: 20px;
         }
 
         .login-footer {
-          margin-top: 3rem;
+          margin-top: 1.5rem;
           text-align: center;
         }
 
