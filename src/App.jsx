@@ -19,6 +19,7 @@ import AcademicDetails from '@/pages/SuperAdmin/AcademicDetails';
 import ReportsPage from '@/pages/SuperAdmin/Reports';
 import SettingsPage from '@/pages/SuperAdmin/Settings';
 import SuperAdminProfile from '@/pages/SuperAdmin/Profile';
+import FundUsage from '@/pages/SuperAdmin/FundUsage';
 
 import './App.css';
 
@@ -54,6 +55,7 @@ function App() {
           <Route path="/super-admin/reports" element={<ReportsPage />} />
           <Route path="/super-admin/settings" element={<SettingsPage />} />
           <Route path="/super-admin/profile" element={<SuperAdminProfile />} />
+          <Route path="/super-admin/fund-usage" element={<FundUsage />} />
         </Routes>
       )}
     </AnimatePresence>

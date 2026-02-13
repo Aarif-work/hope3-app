@@ -63,9 +63,26 @@ const AdminsPage = () => {
         {
             field: 'name',
             headerName: 'Admin Name',
-            cellStyle: { fontWeight: 600 }
+            flex: 1.2,
+            minWidth: 150,
+            cellStyle: {
+                fontWeight: 600,
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
         },
-        { field: 'email', headerName: 'Email Address', flex: 1.5 },
+        {
+            field: 'email',
+            headerName: 'Email Address',
+            flex: 1.5,
+            minWidth: 200,
+            cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
+        },
         {
             field: 'role',
             headerName: 'Role Type',

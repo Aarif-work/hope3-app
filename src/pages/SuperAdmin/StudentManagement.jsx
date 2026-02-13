@@ -77,10 +77,27 @@ const StudentManagement = () => {
         {
             field: 'name',
             headerName: 'Name',
-            cellStyle: { fontWeight: 600 }
+            flex: 1.5,
+            minWidth: 180,
+            cellStyle: {
+                fontWeight: 600,
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
         },
-        { field: 'course', headerName: 'Course' },
-        { field: 'year', headerName: 'Academic Year' },
+        {
+            field: 'course',
+            headerName: 'Course',
+            flex: 1.2,
+            minWidth: 150,
+            cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
+        },
+        { field: 'year', headerName: 'Academic Year', minWidth: 120 },
         {
             field: 'status',
             headerName: 'Status',

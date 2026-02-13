@@ -10,7 +10,8 @@ import {
     FileBarChart,
     Settings,
     LogOut,
-    X
+    X,
+    Wallet
 } from 'lucide-react';
 import logo from '../../assets/hope logo.png';
 import '../../styles/SuperAdmin.css';
@@ -26,6 +27,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         { label: 'Applied Students', icon: ClipboardList, path: '/super-admin/applied' },
         { label: 'Admins', icon: ShieldCheck, path: '/super-admin/admins', sensitive: true },
         { label: 'Donors', icon: HeartHandshake, path: '/super-admin/donors' },
+        { label: 'Fund Usage', icon: Wallet, path: '/super-admin/fund-usage' },
         { label: 'Academic Details', icon: GraduationCap, path: '/super-admin/academic', sensitive: true },
         { label: 'Reports', icon: FileBarChart, path: '/super-admin/reports' },
         { label: 'Settings', icon: Settings, path: '/super-admin/settings', sensitive: true },

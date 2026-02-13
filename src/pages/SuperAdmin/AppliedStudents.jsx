@@ -33,14 +33,41 @@ const AppliedStudents = () => {
     }, [searchTerm, applications]);
 
     const colDefs = useMemo(() => [
-        { field: 'id', headerName: 'Application ID', flex: 1.5 },
+        {
+            field: 'id',
+            headerName: 'Application ID',
+            flex: 1.2,
+            minWidth: 150,
+            cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
+        },
         {
             field: 'name',
             headerName: 'Name',
-            cellStyle: { fontWeight: 600 }
+            flex: 1.5,
+            minWidth: 180,
+            cellStyle: {
+                fontWeight: 600,
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
         },
-        { field: 'course', headerName: 'Course' },
-        { field: 'date', headerName: 'Applied Date' },
+        {
+            field: 'course',
+            headerName: 'Course',
+            flex: 1.2,
+            minWidth: 180,
+            cellStyle: {
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden'
+            }
+        },
+        { field: 'date', headerName: 'Applied Date', minWidth: 120 },
         {
             field: 'status',
             headerName: 'Status',
