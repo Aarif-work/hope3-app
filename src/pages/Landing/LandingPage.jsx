@@ -14,6 +14,8 @@ import {
     UserCog
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '@/services/firebase';
 import logo from '@/assets/hope logo.png';
 import groupImg1 from '@/assets/group image/group image.png';
 import groupImg2 from '@/assets/group image/image.png';
@@ -123,7 +125,21 @@ const LandingPage = () => {
                                 <div className="circle-pointer pointer-right"></div>
                                 <motion.div
                                     className="node-main-circle"
-                                    onClick={() => navigate('/login')}
+                                    onClick={() => {
+                                        const user = auth.currentUser;
+                                        if (user) {
+                                            const role = localStorage.getItem('userRole');
+                                            if (role === 'SUPER_ADMIN' || role === 'ADMIN') {
+                                                navigate('/super-admin/dashboard');
+                                            } else if (role === 'DONOR') {
+                                                navigate('/donor-dashboard');
+                                            } else {
+                                                navigate('/login');
+                                            }
+                                        } else {
+                                            navigate('/login');
+                                        }
+                                    }}
                                     onMouseEnter={(e) => handleHover(e, '#fbbf24')}
                                 >
                                     <UserCog size={56} strokeWidth={1.5} className="node-icon" />

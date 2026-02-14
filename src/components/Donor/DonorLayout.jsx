@@ -13,6 +13,7 @@ import {
     GraduationCap,
     Activity
 } from 'lucide-react';
+import { auth } from '@/services/firebase';
 
 import logo from '../../assets/hope logo.png';
 
@@ -114,7 +115,15 @@ const DonorLayout = ({ title, subtitle, children, activeTab, onTabChange }) => {
                         <Heart size={18} /> Donate Again
                     </button>
                     <button
-                        onClick={() => navigate('/')}
+                        onClick={async () => {
+                            try {
+                                await auth.signOut();
+                                localStorage.removeItem('userRole');
+                                navigate('/login');
+                            } catch (error) {
+                                console.error("Error signing out:", error);
+                            }
+                        }}
                         style={{
                             display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1.2rem',
                             color: '#ef4444', fontWeight: '700', background: 'none', border: 'none',

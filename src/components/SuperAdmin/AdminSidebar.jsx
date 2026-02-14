@@ -13,6 +13,7 @@ import {
     X,
     Wallet
 } from 'lucide-react';
+import { auth } from '@/services/firebase';
 import logo from '../../assets/hope logo.png';
 import '../../styles/SuperAdmin.css';
 
@@ -38,9 +39,14 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         ? allMenuItems.filter(item => !item.sensitive)
         : allMenuItems;
 
-    const handleLogout = () => {
-        localStorage.removeItem('userRole');
-        navigate('/login');
+    const handleLogout = async () => {
+        try {
+            await auth.signOut();
+            localStorage.removeItem('userRole');
+            navigate('/login');
+        } catch (error) {
+            console.error("Error signing out:", error);
+        }
     };
 
     const handleNavigation = (path) => {

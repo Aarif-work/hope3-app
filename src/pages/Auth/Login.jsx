@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Lock, Mail, ArrowRight, Home, ChevronLeft, ShieldCheck, UserCog, Heart } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, Mail, ArrowRight, Home, ChevronLeft, ShieldCheck, UserCog, Heart, AlertCircle } from 'lucide-react';
+import { signInWithEmailAndPassword, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
+import { auth, googleProvider } from '@/services/firebase';
 import logo from '@/assets/hope logo.png';
 import loginBg from '@/assets/login-bg.png';
 import loginVideo from '@/assets/login-page-video.mp4';
@@ -11,6 +13,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const videoRef = useRef(null);
 
   // Seamless Video Loop Monitoring
@@ -43,6 +46,42 @@ const Login = () => {
     };
   }, []);
 
+  // Persistent Login Check
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user && !isLoading) {
+        // Find existing role from localStorage
+        const storedRole = localStorage.getItem('userRole');
+
+        if (storedRole) {
+          if (storedRole === 'SUPER_ADMIN' || storedRole === 'ADMIN') {
+            navigate('/super-admin/dashboard');
+          } else if (storedRole === 'DONOR') {
+            navigate('/donor-dashboard');
+          }
+        } else {
+          // If role is missing but user exists, try to determine role from email
+          const lowerEmail = user.email.toLowerCase();
+          let role = 'DONOR';
+          let path = '/donor-dashboard';
+
+          if (lowerEmail === 'superadmin@hope3.org' || lowerEmail === 'superadmin@gmail.com') {
+            role = 'SUPER_ADMIN';
+            path = '/super-admin/dashboard';
+          } else if (lowerEmail === 'admin@hope3.org') {
+            role = 'ADMIN';
+            path = '/super-admin/dashboard';
+          }
+
+          localStorage.setItem('userRole', role);
+          navigate(path);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
   // Demo credentials for testing
   const demoAccounts = [
     { role: 'Super Admin', email: 'superadmin@hope3.org', password: 'super123', color: '#ef4444', Icon: ShieldCheck },
@@ -58,30 +97,77 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
-    // Artificial delay for premium feel
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const lowerEmail = user.email.toLowerCase();
 
-    const lowerEmail = email.toLowerCase();
+      // Determine role based on email (as per current logic)
+      // Note: In production, consider using Firestore or Firebase Custom Claims for roles
+      let role = 'ADMIN';
+      let path = '/admin-dashboard';
 
-    // Reset permissions
-    localStorage.removeItem('userRole');
+      if (lowerEmail === 'superadmin@hope3.org' || lowerEmail === 'superadmin@gmail.com') {
+        role = 'SUPER_ADMIN';
+        path = '/super-admin/dashboard';
+      } else if (lowerEmail === 'admin@hope3.org') {
+        role = 'ADMIN';
+        path = '/super-admin/dashboard';
+      } else if (lowerEmail.includes('donor')) {
+        role = 'DONOR';
+        path = '/donor-dashboard';
+      }
 
-    if ((lowerEmail === 'superadmin@hope3.org' || lowerEmail === 'superadmin@gmail.com') && password === 'super123') {
-      localStorage.setItem('userRole', 'SUPER_ADMIN');
-      navigate('/super-admin/dashboard');
-    } else if (lowerEmail === 'admin@hope3.org' && password === 'admin123') {
-      localStorage.setItem('userRole', 'ADMIN');
-      navigate('/super-admin/dashboard'); // Redirect to same dashboard, but sidebar will be filtered
-    } else if (lowerEmail.includes('donor')) {
-      localStorage.setItem('userRole', 'DONOR');
-      navigate('/donor-dashboard');
-    } else {
-      // Fallback/Legacy
-      localStorage.setItem('userRole', 'ADMIN');
-      navigate('/admin-dashboard');
+      localStorage.setItem('userRole', role);
+      navigate(path);
+    } catch (err) {
+      console.error("Login error:", err);
+      let message = "Invalid email or password. Please try again.";
+
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        message = "Invalid email or password.";
+      } else if (err.code === 'auth/invalid-email') {
+        message = "Please enter a valid email address.";
+      } else if (err.code === 'auth/too-many-requests') {
+        message = "Too many failed attempts. Please try again later.";
+      }
+
+      setError(message);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const lowerEmail = user.email.toLowerCase();
+
+      // Role logic for Google Users
+      let role = 'DONOR'; // Default to donor for general Google sign-ins
+      let path = '/donor-dashboard';
+
+      if (lowerEmail === 'superadmin@hope3.org' || lowerEmail === 'superadmin@gmail.com') {
+        role = 'SUPER_ADMIN';
+        path = '/super-admin/dashboard';
+      }
+
+      localStorage.setItem('userRole', role);
+      navigate(path);
+    } catch (err) {
+      console.error("Google Login error:", err);
+      if (err.code !== 'auth/cancelled-popup-request') {
+        setError("Could not complete Google sign-in. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -144,6 +230,20 @@ const Login = () => {
             ))}
           </div>
 
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="login-error-message"
+              >
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <form onSubmit={handleLogin} className="login-form">
             <div className="form-group">
               <div className="input-with-icon">
@@ -191,7 +291,12 @@ const Login = () => {
               <span>OR</span>
             </div>
 
-            <button type="button" className="google-signin-btn">
+            <button
+              type="button"
+              className="google-signin-btn"
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+            >
               <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
               <span>Continue with Google</span>
             </button>
@@ -368,6 +473,20 @@ const Login = () => {
         .login-header p {
           color: #64748b;
           font-size: 0.95rem;
+        }
+
+        .login-error-message {
+          background: #fef2f2;
+          color: #ef4444;
+          padding: 0.8rem 1rem;
+          border-radius: 10px;
+          font-size: 0.85rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+          margin-bottom: 1.2rem;
+          border: 1px solid #fee2e2;
         }
 
         .login-form {
