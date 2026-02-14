@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/icon-192x192.png', 'icons/icon-512x512.png', 'vite.svg'],
+      includeAssets: ['favicon.ico', 'icons/apple-touch-icon.png', 'icons/icon-192x192.png', 'icons/icon-512x512.png'],
       manifest: {
         name: 'HOPE3 Academy',
         short_name: 'HOPE3',
@@ -27,13 +27,19 @@ export default defineConfig({
             purpose: 'any'
           },
           {
+            src: 'icons/icon-192x192-maskable.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
+          },
+          {
             src: 'icons/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'icons/icon-512x512.png',
+            src: 'icons/icon-512x512-maskable.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'

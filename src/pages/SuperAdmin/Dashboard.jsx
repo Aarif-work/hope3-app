@@ -127,12 +127,12 @@ const Dashboard = () => {
             <div className="admin-grid-2-1" style={{ marginTop: '2rem' }}>
                 {/* Donation Growth vs Foundation Need Graph */}
                 <div className="admin-card">
-                    <div className="card-header">
+                    <div className="card-header dashboard-chart-header">
                         <div>
                             <h2 className="card-title">Donation Growth & Foundation Impact</h2>
                             <p style={{ fontSize: '0.75rem', color: 'var(--admin-text-light)', marginTop: '0.25rem' }}>Foundation collection vs operational requirements</p>
                         </div>
-                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <div className="chart-legend">
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem' }}>
                                 <div style={{ width: '12px', height: '12px', background: '#00d1c1', borderRadius: '2px' }}></div>
                                 Impact

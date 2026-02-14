@@ -193,18 +193,6 @@ const DonorsPage = () => {
         },
         { field: 'lastPaymentDate', headerName: 'Last Payment' },
         {
-            field: 'monthlyStatus',
-            headerName: 'Monthly Status',
-            cellRenderer: (params) => {
-                if (params.value === 'N/A') return <span style={{ color: '#cbd5e1' }}>—</span>;
-                return (
-                    <span className={`status-badge ${params.value === 'Paid' ? 'status-active' : 'status-pending'}`} style={{ fontSize: '0.7rem' }}>
-                        {params.value}
-                    </span>
-                );
-            }
-        },
-        {
             field: 'status',
             headerName: 'Status',
             cellRenderer: (params) => (
@@ -260,8 +248,8 @@ const DonorsPage = () => {
 
     return (
         <SuperAdminLayout
-            title="Donor Monitoring"
-            subtitle="Monitor donor contributions, monthly commitments and activity logs"
+            title="Donors Management"
+            subtitle="Manage donor accounts, update statuses and control access permissions"
         >
             <div className="admin-card">
                 <div className="card-header">
@@ -276,14 +264,6 @@ const DonorsPage = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <button
-                            className={`admin-btn ${showMissedPaymentsOnly ? 'admin-btn-primary' : 'admin-btn-outline'}`}
-                            onClick={() => setShowMissedPaymentsOnly(!showMissedPaymentsOnly)}
-                            style={{ gap: '0.5rem' }}
-                        >
-                            <Filter size={16} />
-                            {showMissedPaymentsOnly ? 'Showing Missed' : 'Show Missed Monthly'}
-                        </button>
                     </div>
                     <button
                         className="admin-btn admin-btn-primary"

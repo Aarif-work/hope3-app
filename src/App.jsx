@@ -15,6 +15,7 @@ import StudentManagement from '@/pages/SuperAdmin/StudentManagement';
 import AppliedStudents from '@/pages/SuperAdmin/AppliedStudents';
 import AdminsPage from '@/pages/SuperAdmin/Admins';
 import DonorsPage from '@/pages/SuperAdmin/Donors';
+import DonationsPage from '@/pages/SuperAdmin/Donations';
 import AcademicDetails from '@/pages/SuperAdmin/AcademicDetails';
 import ReportsPage from '@/pages/SuperAdmin/Reports';
 import SettingsPage from '@/pages/SuperAdmin/Settings';
@@ -51,6 +52,7 @@ function App() {
           <Route path="/super-admin/applied" element={<AppliedStudents />} />
           <Route path="/super-admin/admins" element={<AdminsPage />} />
           <Route path="/super-admin/donors" element={<DonorsPage />} />
+          <Route path="/super-admin/donations" element={<DonationsPage />} />
           <Route path="/super-admin/academic" element={<AcademicDetails />} />
           <Route path="/super-admin/reports" element={<ReportsPage />} />
           <Route path="/super-admin/settings" element={<SettingsPage />} />

@@ -11,7 +11,8 @@ import {
     Settings,
     LogOut,
     X,
-    Wallet
+    Wallet,
+    DollarSign
 } from 'lucide-react';
 import { auth } from '@/services/firebase';
 import logo from '../../assets/hope logo.png';
@@ -27,7 +28,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
         { label: 'Students Management', icon: Users, path: '/super-admin/students' },
         { label: 'Applied Students', icon: ClipboardList, path: '/super-admin/applied' },
         { label: 'Admins', icon: ShieldCheck, path: '/super-admin/admins', sensitive: true },
-        { label: 'Donors', icon: HeartHandshake, path: '/super-admin/donors' },
+        { label: 'Donors Management', icon: HeartHandshake, path: '/super-admin/donors' },
+        { label: 'Donations Lists', icon: DollarSign, path: '/super-admin/donations' },
         { label: 'Fund Usage', icon: Wallet, path: '/super-admin/fund-usage' },
         { label: 'Academic Details', icon: GraduationCap, path: '/super-admin/academic', sensitive: true },
         { label: 'Reports', icon: FileBarChart, path: '/super-admin/reports' },
@@ -74,12 +76,13 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                     >
                         <img
                             src={logo}
-                            alt="HOPE3"
+                            alt="HOPE3 Logo"
                             style={{
                                 height: '38px',
                                 width: 'auto',
                                 objectFit: 'contain',
-                                display: 'block'
+                                display: 'block',
+                                flexShrink: 0
                             }}
                         />
                         <span style={{
@@ -90,7 +93,8 @@ const AdminSidebar = ({ isOpen, onClose }) => {
                             whiteSpace: 'nowrap',
                             lineHeight: 1,
                             display: 'flex',
-                            alignItems: 'baseline'
+                            alignItems: 'baseline',
+                            flexShrink: 0
                         }}>
                             HOPE3 <span style={{ color: 'var(--admin-primary)', marginLeft: '0.35rem' }}>Academy</span>
                         </span>

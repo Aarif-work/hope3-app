@@ -59,6 +59,19 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    overflow-y: auto;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    margin: 0 -0.5rem;
+    /* Allow items to breathe in scroll area */
+    padding: 0 0.5rem;
+}
+
+.admin-nav::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari and Opera */
 }
 
 .admin-nav-item {
@@ -89,7 +102,7 @@
 }
 
 .admin-sidebar-footer {
-    margin-top: auto;
+    margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--admin-border);
 }
@@ -662,7 +675,29 @@
     .admin-title h1 {
         font-size: 1.25rem;
     }
+
+    .dashboard-chart-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    .chart-legend {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 1rem;
+        display: flex;
+    }
 }
+
+.chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+
 
 .table-responsive {
     width: 100%;
