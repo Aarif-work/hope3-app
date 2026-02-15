@@ -10,6 +10,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'icons/apple-touch-icon.png', 'icons/icon-192x192.png', 'icons/icon-512x512.png'],
+      workbox: {
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3 MB
+      },
       manifest: {
         name: 'HOPE3 Academy',
         short_name: 'HOPE3',
@@ -54,4 +57,17 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          'charts': ['recharts'],
+          'grid': ['ag-grid-community', 'ag-grid-react'],
+        }
+      }
+    }
+  }
 })
